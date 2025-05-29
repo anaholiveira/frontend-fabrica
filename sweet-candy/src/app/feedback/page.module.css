@@ -1,0 +1,160 @@
+.container {
+    background: linear-gradient(#FBD1FF 0%, #FFA4EB 100% );
+    border-radius: 10px;
+    padding: 20px;
+    width: 300px;
+    margin: auto;
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 20px ;
+    box-shadow: 0 5px 15px var(--cor2);
+}
+
+.rating {
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    flex-direction: row-reverse;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    font-size: 24px;
+    color: #ffffff;
+    padding: 0 5px;
+}
+
+.rating input:checked ~ label {
+    color: #f39c12;
+}
+
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #f39c12;
+}
+
+.input {
+    width: 100%;
+    height: 60px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-top: 10px;
+    padding: 10px;
+}
+
+.upload-section {
+    margin-top: 15px;
+}
+
+.file-upload-label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.buttons {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.button {
+    font-family: Nerko One;
+    background-color: #fc7de0;
+    font-size: 16px;
+    border: none;
+    padding: 10px 20px;
+    color: var(--cor4);
+    border-radius: 8px;
+    margin: auto;
+    display: block;
+    cursor: pointer;
+}
+
+.button:hover {
+    transform: scale(1.02);
+    box-shadow: 0 1px 15px #ff78e2;
+}
+
+.button:hover {
+    transform: scale(1.04);
+    color: var(--cor3);
+}
+
+.image{
+    display: none;
+
+}
+
+.fotoinput{
+    width: 2vw;
+    min-width: 25px;
+    display: flex;
+    align-items: normal;
+    
+}
+
+.filee{
+   font-family: "Coiny", system-ui;
+   color: var(--cor4);
+   font-size: 2vh;
+}
+
+.file label{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: "Coiny", system-ui ;
+    padding: 1%;
+}
+
+.file input{
+    width: 10vw;
+}
+
+.h1{
+    font-family: "Coiny", system-ui;
+    color: var(--cor4);
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.aviso {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f7a7d7;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    animation: slideDown 0.9s forwards, fadeOut 2.5s 2.5s forwards;
+}
+
+@keyframes slideDown {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}

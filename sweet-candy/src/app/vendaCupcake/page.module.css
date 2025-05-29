@@ -1,0 +1,57 @@
+.caixa {
+    width: 280px;
+    padding: 20px;
+    border-radius: 15px;
+    background: linear-gradient(#FBD1FF 0%, #FFA4EB 100% );
+    text-align: center;
+    display: block;
+    margin: auto;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    box-shadow: 0 5px 15px var(--cor2);
+}
+  
+.mensagem {
+    margin: 20px 0;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #fff;
+    font-size: 16px;
+    color: #000000;
+}
+  
+.icone {
+    font-size: 24px;
+}
+  
+.agradecimento {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #fff;
+    font-size: 14px;
+    color: #000000;
+}
+  
+.botao {
+    background-color: #fc7de0;
+    border: none;
+    padding: 10px 20px;
+    color: var(--cor4);
+    border-radius: 10px;
+    margin: auto;
+    display: block;
+    text-decoration: none;
+    margin-bottom: 10px;
+    font-family: 'Nerko One', system-ui;
+}
+
+.link:hover{
+    color: var(--cor3);
+}
+
+.botao:hover {
+    transform: scale(1.02);
+    box-shadow: 0 1px 15px #ff78e2;
+    color: var(--cor3);
+}

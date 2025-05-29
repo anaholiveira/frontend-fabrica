@@ -1,0 +1,56 @@
+.label{
+    font-size: 23px;
+    display: block;
+    margin-top: 10px;
+    font-family: "Coiny", system-ui;
+    color: var(--cor4);
+    margin-left: 20px;
+}
+
+.input{
+    border-radius: 8px;
+    border: none;
+    width: 90%;
+    height: 35px;
+    display: block;
+    margin: auto;
+    padding-left: 40px;
+    box-sizing: border-box
+}
+
+.input::placeholder {
+   font-family: "Coiny", system-ui;
+   color: var(--cor4);
+}
+
+.icones{
+    position: absolute;
+    margin-left: 20px;
+}
+
+.button{
+    display: block;
+    margin: auto;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    font-size: 18px;
+    font-family: Nerko One;
+    padding: 5px;
+    border-radius: 15px;
+    background-color: #fc7de0;
+    border: none;
+    width: 90%;
+    cursor: pointer;
+    color: var(--cor4);
+}
+
+.link{
+    text-decoration: none;
+    color: var(--cor4);
+}
+
+.link:hover, .button:hover{
+    color: var(--cor3);
+    transform: scale(1.04);
+    box-shadow: 0 1px 15px #ff78e2;
+}

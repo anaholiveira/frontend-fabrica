@@ -1,0 +1,331 @@
+.telaFundo {
+    width: 70vw;
+    height: 58vh;
+    margin: 30px auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 20px;
+    background: linear-gradient(#FBD1FF 0%, #FFA4EB 100%);
+    box-shadow: 0 5px 15px var(--cor2);
+}
+
+.h1 {
+    color: var(--cor4);
+    font-family: 'Coiny', system-ui; ;
+    text-align: center;
+    font-size: 45px;
+    margin: 5px 0 10px;
+}
+
+.h2 {
+    color: var(--cor4);
+    font-family: 'Coiny', system-ui; ;
+    text-align: center;
+    margin: 15px 0 10px;
+}
+
+.pIntroducao {
+    color: var(--cor4);
+    font-family: Nerko One;
+    text-align: center;
+    font-size: 24px;
+}
+
+.button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #fc7de0;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--cor4);
+    font-family: Nerko One;
+    text-decoration: none;
+}
+
+.buttons{
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    gap: 80px;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.button:hover {
+    transform: scale(1.04);
+    box-shadow: 0 1px 15px #ff78e2;
+}
+
+.link:hover{
+    color: var(--cor3);
+}
+
+.mainContainer {
+    padding: 5vh;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 70px;
+}
+
+.selectBody {
+    position: relative;
+    width: 190px;
+    height: 45px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.selectBody .select {
+    height: 110%;
+    width: 115%;
+    font-size: 17px;
+    border: none;
+    appearance: none;
+    padding: 0 30px 0 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.selectContainer .selectLabel {
+    color: var(--cor4);
+    font-size: 25px;
+    text-align: center;
+    font-family: Nerko One;
+}
+
+.selectIcon {
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    cursor: pointer;
+}
+
+.resumoContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 55%;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.quantidadeContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.quantidadeLabel {
+    font-size: 20px;
+    font-family: Nerko One;
+    color: var(--cor4);
+}
+
+.quantidadeInput {
+    width: 50px;
+    height: 25px;
+    text-align: center;
+    font-size: 16px;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.resumoTitulo {
+    font-family: Nerko One;
+    font-size: 24px;
+    color: var(--cor4)
+}
+
+.carrinho {
+    margin-left: 96%;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.detalhesCupcakeCarrinho {
+    margin-bottom: 25px;
+    padding-left: 28px;
+    padding-top: 10px;
+}
+
+.strong {
+    color: var(--cor4);
+}
+
+.pCarrinho {
+    font-size: 20px;
+}
+
+.detalhesCarrinho {
+    position: fixed;
+    top: 100px;
+    z-index: 999;
+    width: 500px;
+    height: 500px;
+    background-color: var(--cor3);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.detalhesDoCupcake {
+    overflow-y: auto;
+    max-height: 360px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: transparent;
+    z-index: 998;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 325px) {
+    .telaFundo {
+        width: 95vw;
+        height: auto;
+    }
+    .buttons {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .mainContainer {
+        flex-direction: column;
+        padding: 3vh;
+    }
+    .selectBody .select {
+        width: 100%;
+    }
+    .selectIcon {
+        left: 88%;
+    }
+    .resumoContainer {
+        flex-direction: column;
+        width: 100%;
+        gap: 20px;
+    }
+}
+
+@media (min-width: 326px) and (max-width: 425px) {
+    .telaFundo {
+        width: 90vw;
+        height: auto;
+        padding: 15px;
+    }
+    .buttons {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .mainContainer {
+        flex-direction: column;
+        padding: 3vh;
+    }
+    .selectBody .select {
+        width: 100%;
+    }
+    .selectIcon {
+        left: 90%;
+    }
+    .resumoContainer {
+        flex-direction: column;
+        width: 100%;
+        gap: 20px;
+    }
+}
+
+@media (min-width: 426px) and (max-width: 768px) {
+    .telaFundo {
+        width: 80vw;
+        height: auto;
+        padding: 15px;
+    }
+    .buttons {
+        flex-direction: column;
+        gap: 30px;
+    }
+    .mainContainer {
+        flex-direction: column;
+        padding: 3vh;
+    }
+    .selectBody .select {
+        width: 108%;
+        height: 50px;
+        font-size: 18px;
+        padding: 0 12px;
+        align-items: center;
+    }
+    .selectIcon {
+        left: 95%;
+    }
+    .resumoContainer {
+        width: 100%;
+        gap: 20px;
+    }
+}
+
+@media (min-width: 1270px) and (max-width: 1538px) {
+    .telaFundo {
+        width: 80vw; 
+        height: auto;
+        padding: 15px;
+    }
+    .mainContainer {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
+        gap: 20px;
+        justify-items: center;
+        grid-auto-flow: column;
+    }
+    .selectBody {
+        width: 215px;
+        height: 45px;
+        margin-bottom: 50px;
+    }
+    .selectBody .select {
+        width: 95%;
+        height: 100%;
+    }
+    .selectIcon {
+        left: 82%;
+    }
+}
+
+@media (max-width: 1750px) {
+    .telaFundo {
+        width: 80vw; 
+        height: auto;
+        padding: 15px;
+    }
+    .mainContainer {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 3vh;
+        gap: 20px;
+    }
+    .selectBody {
+        width: 215px;
+        height: 45px;
+        margin-bottom: 50px;
+    }
+    .selectBody .select {
+        width: 95%;
+        height: 100%;
+    }
+    .selectIcon {
+        left: 82%;
+    }
+}

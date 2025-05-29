@@ -1,0 +1,73 @@
+.header {
+    width: 100%; 
+    background-color: var(--cor3);
+    box-shadow: 0 8px 10px var(--cor2);
+    height: auto;
+    min-height: 120px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px; 
+}
+
+.logo {
+    max-width: 140px;
+    height: auto;
+}
+
+.nav .ul {
+    display: flex;
+    list-style: none;
+}
+
+.nav .ul .li {
+    padding: 10px;
+}
+
+.entrarCadastrar {
+    font-family: "Coiny", system-ui;
+    color: var(--cor4);
+    font-size: 20px;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 15px;
+    background-color: #fc7de0;
+}
+
+.entrarCadastrar:hover {
+    color: var(--cor3);
+    transform: scale(1.04);
+    box-shadow: 0 1px 15px #ff78e2;
+}
+
+.nav .ul .li:hover{
+    transform: scale(1.04);
+}
+
+@media (max-width: 480px) {
+    .header {
+        flex-direction: column;
+        align-items:center;
+        padding: 10px;
+    }
+
+    .logo {
+        max-width: 120px;
+    }
+
+    .nav .ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav .ul .li {
+        padding: 5px 0;
+    }
+}
+
+@media (max-width: 325px) {
+    .logo {
+        max-width: 100px; 
+    }
+}
