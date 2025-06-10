@@ -1,5 +1,5 @@
 'use client';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Headerpedido from "@/components/HeaderPedido";
 import Footer from '@/components/Footer';
@@ -7,6 +7,8 @@ import styles from './page.module.css';
 import Link from 'next/link';
 
 export default function Pedido() {
+  const clienteId = 1; // Id do cliente fixo (troque se quiser)
+
   const [mensagem, setMensagem] = useState("");
   const [quantidade, setQuantidade] = useState(1);
   const [pedido, setPedido] = useState({
@@ -15,23 +17,46 @@ export default function Pedido() {
     cobertura: "",
     corCobertura: ""
   });
-
+  const [ingredientesAPI, setIngredientesAPI] = useState({
+    tamanho: [],
+    recheio: [],
+    cobertura: [],
+    cor_cobertura: []
+  });
   const [mostrarCarrinho, setMostrarCarrinho] = useState(false);
+  const [carrinho, setCarrinho] = useState([]);
 
-  const precoBase = 0.00;
-  const precoTotal = (quantidade * precoBase).toFixed(2);
+  useEffect(() => {
+    fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/buscarIngredientes')
+      .then(res => res.json())
+      .then(data => {
+        const agrupados = { tamanho: [], recheio: [], cobertura: [], cor_cobertura: [] };
+        data.forEach(item => {
+          agrupados[item.tipo]?.push(item);
+        });
+        setIngredientesAPI(agrupados);
+      })
+      .catch(err => console.error('Erro ao buscar ingredientes:', err));
+  }, []);
 
-  const labels = {
-    tamanho: "Tamanho",
-    recheio: "Recheio",
-    cobertura: "Cobertura",
-    corCobertura: "Cor da Cobertura"
+  const buscarCarrinho = async () => {
+    try {
+      const res = await fetch(`https://apisweetcandy.dev.vilhena.ifro.edu.br/carrinho/${clienteId}`);
+      if (!res.ok) throw new Error("Erro ao buscar o carrinho");
+      const dados = await res.json();
+      setCarrinho(dados);
+    } catch (error) {
+      alert(error.message);
+      setCarrinho([]);
+    }
   };
 
-  const resetSelect = () => {
-    document.querySelectorAll("select").forEach(select => {
-      select.value = "";
-    });
+  useEffect(() => {
+    if (mostrarCarrinho) buscarCarrinho();
+  }, [mostrarCarrinho]);
+
+  const reset = () => {
+    document.querySelectorAll("select").forEach(select => select.value = "");
     setPedido({ tamanho: "", recheio: "", cobertura: "", corCobertura: "" });
     setQuantidade(1);
   };
@@ -41,15 +66,77 @@ export default function Pedido() {
     setPedido(prev => ({ ...prev, [name]: value }));
   };
 
-  const adicionarAoCarrinho = (event) => {
+  const buscarNomeIngrediente = (tipo, id) => {
+    const lista = ingredientesAPI[tipo === 'corCobertura' ? 'cor_cobertura' : tipo];
+    const item = lista.find(i => String(i.id_ingrediente) === String(id));
+    return item ? item.nome : "";
+  };
+
+  const buscarValorIngrediente = (tipo, id) => {
+    const lista = ingredientesAPI[tipo === 'corCobertura' ? 'cor_cobertura' : tipo];
+    const item = lista.find(i => String(i.id_ingrediente) === String(id));
+    return item ? parseFloat(item.valor) : 0;
+  };
+
+  const calcularPrecoTotal = () => {
+    const totalIngredientes =
+      buscarValorIngrediente("tamanho", pedido.tamanho) +
+      buscarValorIngrediente("recheio", pedido.recheio) +
+      buscarValorIngrediente("cobertura", pedido.cobertura) +
+      buscarValorIngrediente("corCobertura", pedido.corCobertura);
+    return (totalIngredientes * quantidade).toFixed(2);
+  };
+
+  const precoTotal = calcularPrecoTotal();
+
+  const adicionarAoCarrinho = async (event) => {
     event.preventDefault();
-    if (Object.values(pedido).some(value => value === "")) {
-      alert("Não foi possível adicionar ao carrinho. Selecione todas as opções antes de continuar.");
+
+    if (pedido.tamanho === "" || pedido.recheio === "" || pedido.cobertura === "" || pedido.corCobertura === "") {
+      alert("Por favor, selecione todas as opções.");
       return;
     }
-    setMensagem("Sua compra foi adicionada ao carrinho!");
-    alert("Sua compra foi adicionada ao carrinho!");
-    resetSelect();
+
+    const ingredientes = [
+      Number(pedido.tamanho),
+      Number(pedido.recheio),
+      Number(pedido.cobertura),
+      Number(pedido.corCobertura),
+    ];
+
+    const dadosParaAPI = {
+      id_cliente: clienteId,
+      ingredientes,
+      quantidade,
+    };
+
+    try {
+      const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/adicionarAoCarrinho", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dadosParaAPI),
+      });
+
+      const resposta = await res.json();
+
+      if (!res.ok) {
+        throw new Error(resposta.mensagem || "Erro ao adicionar ao carrinho");
+      }
+
+      alert(resposta.mensagem);
+      reset();
+      buscarCarrinho();
+
+    } catch (error) {
+      alert("Erro ao adicionar ao carrinho: " + error.message);
+    }
+  };
+
+  const labels = {
+    tamanho: "Tamanho",
+    recheio: "Recheio",
+    cobertura: "Cobertura",
+    corCobertura: "Cor da Cobertura"
   };
 
   return (
@@ -72,11 +159,13 @@ export default function Pedido() {
             <div className={styles.detalhesCarrinho}>
               <h2 className={styles.h2}>Carrinho</h2>
               <div className={styles.detalhesDoCupcake}>
-                {[1, 2, 3, 4].map((id) => (
-                  <div key={id} className={styles.detalhesCupcakeCarrinho}>
-                    <p className={styles.pCarrinho}><strong className={styles.strong}>ID:</strong> 0{id}</p>
-                    <p className={styles.pCarrinho}><strong className={styles.strong}>Ingredientes:</strong> pequeno, brigadeiro, chantilly, rosa</p>
-                    <p className={styles.pCarrinho}><strong className={styles.strong}>Quantidade:</strong> 02</p>
+                {carrinho.length === 0 && <p>Seu carrinho está vazio.</p>}
+                {carrinho.map(item => (
+                  <div key={item.id_pedido_carrinho} className={styles.itemCarrinho}>
+                    <p><span className={styles.tituloCarrinho}>ID Pedido:</span> {item.id_pedido_carrinho}</p>
+                    <p><span className={styles.tituloCarrinho}>Ingredientes:</span> {item.ingredientes.split(',').join(', ')}</p>
+                    <p><span className={styles.tituloCarrinho}>Quantidade:</span> {item.quantidade}</p>
+                    <p><span className={styles.tituloCarrinho}>Valor total:</span> R$ {Number(item.valor_total).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -92,16 +181,18 @@ export default function Pedido() {
             <div key={index} className={styles.selectContainer}>
               <label className={styles.selectLabel} htmlFor={`select${item}`}>{labels[item]}</label>
               <div className={styles.selectBody}>
-                <select className={styles.select} name={item} id={`select${item}`} onChange={handleSelectChange}>
+                <select
+                  className={styles.select}
+                  name={item}
+                  id={`select${item}`}
+                  onChange={handleSelectChange}
+                >
                   <option value="">Escolha uma opção</option>
-                  {item === "tamanho" && ["P (pequeno) R$3,00", "M (médio) R$5,00", "G (grande) R$8,00"].map(opt =>
-                    <option key={opt} value={opt}>{opt}</option>)}
-                  {item === "recheio" && ["Brigadeiro R$2,00", "Doce de leite R$2,00", "Leite Ninho R$2,00", "Nutella R$3,00", "Nenhum R$0,00"].map(opt =>
-                    <option key={opt} value={opt}>{opt}</option>)}
-                  {item === "cobertura" && ["Glacê R$2,00", "Chantilly R$2,00", "Merengue R$2,00"].map(opt =>
-                    <option key={opt} value={opt}>{opt}</option>)}
-                  {item === "corCobertura" && ["Roxo R$1,00", "Lilás R$1,00", "Rosa R$1,00", "Azul R$1,00", "Azul Claro R$1,00", "Verde Menta R$1,00", "Branco R$0,00"].map(opt =>
-                    <option key={opt} value={opt}>{opt}</option>)}
+                  {ingredientesAPI[item === 'corCobertura' ? 'cor_cobertura' : item].map(opt => (
+                    <option key={opt.id_ingrediente} value={opt.id_ingrediente}>
+                      {opt.nome} R$ {Number(opt.valor).toFixed(2)}
+                    </option>
+                  ))}
                 </select>
                 <div className={styles.selectIcon}>
                   <Image className={styles.img} src="/images/iconseta.png" alt="icon seta" width={18} height={18} />
@@ -115,7 +206,10 @@ export default function Pedido() {
           <div className={styles.resumoPedido}>
             <h2 className={styles.resumoTitulo}>Resumo do Pedido</h2>
             {Object.keys(pedido).map((item, index) => (
-              <p key={index}><strong>{labels[item]}:</strong> {pedido[item] || ""}</p>
+              <p key={index}>
+                <strong>{labels[item]}:</strong>{" "}
+                {pedido[item] ? buscarNomeIngrediente(item, pedido[item]) : ""}
+              </p>
             ))}
           </div>
           <div className={styles.quantidadeContainer}>
@@ -126,7 +220,7 @@ export default function Pedido() {
               min="1"
               max="300"
               value={quantidade}
-              onChange={(e) => setQuantidade(e.target.value)}
+              onChange={(e) => setQuantidade(Number(e.target.value))}
               className={styles.quantidadeInput}
             />
             <p className={styles.precoTotal}>Total: R$ {precoTotal}</p>
@@ -134,14 +228,10 @@ export default function Pedido() {
         </div>
 
         <div className={styles.buttons}>
-          <button className={styles.button} type="button" onClick={resetSelect}>
-            <Link className={styles.link} href="#">Cancelar opções</Link>
-          </button>
-          <button className={styles.button} type="submit">
+          <button className={styles.button} type="button" onClick={reset}>Cancelar opções</button>
+          <button className={styles.button} type="button" onClick={adicionarAoCarrinho}>Adicionar ao carrinho</button>
+          <button className={styles.button}>
             <Link className={styles.link} href="/checkout">Finalizar pedido</Link>
-          </button>
-          <button className={styles.button} type="button" onClick={adicionarAoCarrinho}>
-            <Link className={styles.link} href="#">Adicionar ao carrinho</Link>
           </button>
         </div>
       </div>

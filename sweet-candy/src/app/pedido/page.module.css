@@ -146,51 +146,48 @@
 }
 
 .carrinho {
-    margin-left: 96%;
-    cursor: pointer;
-    margin-top: 5px;
+  margin-left: 96%;
+  cursor: pointer;
+  margin-top: 5px;
 }
 
-.detalhesCupcakeCarrinho {
-    margin-bottom: 25px;
-    padding-left: 28px;
-    padding-top: 10px;
-}
-
-.strong {
-    color: var(--cor4);
-}
-
-.pCarrinho {
-    font-size: 20px;
+.tituloCarrinho {
+  font-weight: bold;
+  color: var(--cor4);
 }
 
 .detalhesCarrinho {
-    position: fixed;
-    top: 100px;
-    z-index: 999;
-    width: 500px;
-    height: 500px;
-    background-color: var(--cor3);
-    border-radius: 15px;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  position: fixed;
+  top: 100px;
+  z-index: 999;
+  width: 500px;
+  height: 500px;
+  background-color: var(--cor3);
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .detalhesDoCupcake {
-    overflow-y: auto;
-    max-height: 360px;
+  overflow-y: auto;
+  max-height: 360px;
+}
+
+.itemCarrinho {
+  margin-bottom: 20px;
+  padding-left: 25px;
+  padding-top: 10px;
+  font-size: 18px;
 }
 
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: transparent;
-    z-index: 998;
-    background: rgba(0, 0, 0, 0.3);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 998;
 }
 
 @media (max-width: 325px) {

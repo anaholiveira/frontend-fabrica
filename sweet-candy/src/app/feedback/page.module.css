@@ -158,3 +158,25 @@
         opacity: 0;
     }
 }
+
+.previewContainer {
+  display: grid;
+  grid-template-columns: repeat(3, 75px);
+  gap: 8px;
+  padding: 10px;
+  border: 2px double #fd99ce;
+  border-radius: 10px;
+  background-color: #ffdee9;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 10px;
+}
+
+.previewImg {
+  width: 75px;
+  height: 75px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 3px double #fd99ce;
+  box-shadow: 0 2px 5px rgba(255, 182, 193, 0.4);
+}
