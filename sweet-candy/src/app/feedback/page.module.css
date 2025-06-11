@@ -1,12 +1,12 @@
 .container {
-    background: linear-gradient(#FBD1FF 0%, #FFA4EB 100% );
+    background: linear-gradient(#FBD1FF 0%, #FFA4EB 100%);
     border-radius: 10px;
     padding: 20px;
     width: 300px;
     margin: auto;
     display: block;
     margin-top: 20px;
-    margin-bottom: 20px ;
+    margin-bottom: 20px;
     box-shadow: 0 5px 15px var(--cor2);
 }
 
@@ -75,47 +75,41 @@
 }
 
 .button:hover {
-    transform: scale(1.02);
+    transform: scale(1.04);
+    color: var(--cor3);
     box-shadow: 0 1px 15px #ff78e2;
 }
 
-.button:hover {
-    transform: scale(1.04);
-    color: var(--cor3);
-}
-
-.image{
+.image {
     display: none;
-
 }
 
-.fotoinput{
+.fotoinput {
     width: 2vw;
     min-width: 25px;
     display: flex;
     align-items: normal;
-    
 }
 
-.filee{
+.filee {
    font-family: "Coiny", system-ui;
    color: var(--cor4);
    font-size: 2vh;
 }
 
-.file label{
+.file label {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-family: "Coiny", system-ui ;
+    font-family: "Coiny", system-ui;
     padding: 1%;
 }
 
-.file input{
+.file input {
     width: 10vw;
 }
 
-.h1{
+.h1 {
     font-family: "Coiny", system-ui;
     color: var(--cor4);
     text-align: center;
@@ -159,24 +153,41 @@
     }
 }
 
-.previewContainer {
+.containerPrevia {
   display: grid;
   grid-template-columns: repeat(3, 75px);
   gap: 8px;
   padding: 10px;
-  border: 2px double #fd99ce;
+  border: 2px double #f39ce0;
   border-radius: 10px;
-  background-color: #ffdee9;
+  background: linear-gradient(#fbdbff 40%, #ffc6f3 60%);
   width: fit-content;
   max-width: 100%;
   margin-top: 10px;
 }
 
-.previewImg {
+.imagemPrevia {
   width: 75px;
   height: 75px;
   object-fit: cover;
   border-radius: 10px;
   border: 3px double #fd99ce;
   box-shadow: 0 2px 5px rgba(255, 182, 193, 0.4);
+}
+
+.botaoRemoverImagem {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  background-color: #fd99ce;
+  border: none;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  font-size: 12px;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  line-height: 12px;
+  text-align: center;
 }
