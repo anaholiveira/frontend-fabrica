@@ -52,7 +52,19 @@ export default function CriarConta() {
                 alert(msg);
                 event.target.reset();
 
-                // Redireciona para a tela de fazer pedido
+                const loginResponse = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, senha }),
+                });
+
+                if (loginResponse.ok) {
+                    const loginData = await loginResponse.json();
+                    localStorage.setItem('clienteId', loginData.clienteId);
+                }
+
                 router.push('/pedido');
             } else {
                 const msg = dados.mensagem || 'Erro ao criar conta!';

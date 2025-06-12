@@ -1,15 +1,15 @@
 'use client';
 import { useState, useEffect } from "react";
+import { useRouter } from 'next/navigation';
 import Image from "next/image";
-import Headerpedido from "@/components/HeaderPedido";
 import Footer from '@/components/Footer';
+import HeaderPedido from '@/components/HeaderPedido';
 import styles from './page.module.css';
-import Link from 'next/link';
 
 export default function Pedido() {
-  const clienteId = 1; // Id do cliente fixo (troque se quiser)
+  const router = useRouter();
 
-  const [mensagem, setMensagem] = useState("");
+  const [clienteId, setClienteId] = useState(null);
   const [quantidade, setQuantidade] = useState(1);
   const [pedido, setPedido] = useState({
     tamanho: "",
@@ -27,6 +27,15 @@ export default function Pedido() {
   const [carrinho, setCarrinho] = useState([]);
 
   useEffect(() => {
+    const idSalvo = localStorage.getItem('clienteId');
+    if (idSalvo) {
+      setClienteId(Number(idSalvo));
+    } else {
+      alert("Erro: cliente não encontrado. Faça login novamente.");
+    }
+  }, []);
+
+  useEffect(() => {
     fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/buscarIngredientes')
       .then(res => res.json())
       .then(data => {
@@ -41,6 +50,7 @@ export default function Pedido() {
 
   const buscarCarrinho = async () => {
     try {
+      if (!clienteId) return;
       const res = await fetch(`https://apisweetcandy.dev.vilhena.ifro.edu.br/carrinho/${clienteId}`);
       if (!res.ok) throw new Error("Erro ao buscar o carrinho");
       const dados = await res.json();
@@ -53,7 +63,7 @@ export default function Pedido() {
 
   useEffect(() => {
     if (mostrarCarrinho) buscarCarrinho();
-  }, [mostrarCarrinho]);
+  }, [mostrarCarrinho, clienteId]);
 
   const reset = () => {
     document.querySelectorAll("select").forEach(select => select.value = "");
@@ -65,13 +75,12 @@ export default function Pedido() {
     const { name, value } = event.target;
     setPedido(prev => ({ ...prev, [name]: value }));
   };
-
+  
   const buscarNomeIngrediente = (tipo, id) => {
     const lista = ingredientesAPI[tipo === 'corCobertura' ? 'cor_cobertura' : tipo];
     const item = lista.find(i => String(i.id_ingrediente) === String(id));
     return item ? item.nome : "";
   };
-
   const buscarValorIngrediente = (tipo, id) => {
     const lista = ingredientesAPI[tipo === 'corCobertura' ? 'cor_cobertura' : tipo];
     const item = lista.find(i => String(i.id_ingrediente) === String(id));
@@ -91,7 +100,10 @@ export default function Pedido() {
 
   const adicionarAoCarrinho = async (event) => {
     event.preventDefault();
-
+    if (!clienteId) {
+      alert("Erro: clienteId não disponível.");
+      return;
+    }
     if (pedido.tamanho === "" || pedido.recheio === "" || pedido.cobertura === "" || pedido.corCobertura === "") {
       alert("Por favor, selecione todas as opções.");
       return;
@@ -118,11 +130,9 @@ export default function Pedido() {
       });
 
       const resposta = await res.json();
-
       if (!res.ok) {
         throw new Error(resposta.mensagem || "Erro ao adicionar ao carrinho");
       }
-
       alert(resposta.mensagem);
       reset();
       buscarCarrinho();
@@ -131,6 +141,79 @@ export default function Pedido() {
       alert("Erro ao adicionar ao carrinho: " + error.message);
     }
   };
+
+  const finalizarPedido = async () => {
+  if (!clienteId) {
+    alert("Erro: clienteId não disponível.");
+    return;
+  }
+
+  try {
+    if (carrinho.length > 0) {
+      const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/finalizarPedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_cliente: clienteId }),
+      });
+
+      const resposta = await res.json();
+      if (!res.ok) throw new Error(resposta.mensagem || "Erro ao finalizar pedido do carrinho");
+      alert(resposta.mensagem);
+
+    } else {
+      if (
+        !pedido.tamanho &&
+        !pedido.recheio &&
+        !pedido.cobertura &&
+        !pedido.corCobertura
+      ) {
+        alert("Não há pedidos no carrinho nem seleção atual para finalizar.");
+        return;
+      }
+
+      if (
+        !pedido.tamanho ||
+        !pedido.recheio ||
+        !pedido.cobertura ||
+        !pedido.corCobertura
+      ) {
+        alert("Por favor, selecione todas as opções para finalizar o pedido.");
+        return;
+      }
+
+      const ingredientes = [
+        Number(pedido.tamanho),
+        Number(pedido.recheio),
+        Number(pedido.cobertura),
+        Number(pedido.corCobertura)
+      ];
+
+      const dadosParaAPI = {
+        id_cliente: clienteId,
+        ingredientes,
+        quantidade
+      };
+
+      const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/fazerPedidoDireto", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dadosParaAPI),
+      });
+
+      const resposta = await res.json();
+      if (!res.ok) throw new Error(resposta.mensagem || "Erro ao fazer pedido");
+      alert(resposta.mensagem);
+    }
+
+    reset();
+    setMostrarCarrinho(false);
+    buscarCarrinho();
+    router.push("/checkout");
+
+  } catch (error) {
+    alert("Erro ao finalizar: " + error.message);
+  }
+};
 
   const labels = {
     tamanho: "Tamanho",
@@ -141,7 +224,7 @@ export default function Pedido() {
 
   return (
     <div>
-      <Headerpedido />
+      <HeaderPedido />
 
       <div className={styles.telaFundo}>
         <Image
@@ -230,9 +313,7 @@ export default function Pedido() {
         <div className={styles.buttons}>
           <button className={styles.button} type="button" onClick={reset}>Cancelar opções</button>
           <button className={styles.button} type="button" onClick={adicionarAoCarrinho}>Adicionar ao carrinho</button>
-          <button className={styles.button}>
-            <Link className={styles.link} href="/checkout">Finalizar pedido</Link>
-          </button>
+          <button className={styles.button} type="button" onClick={finalizarPedido}>Finalizar pedido</button>
         </div>
       </div>
 
