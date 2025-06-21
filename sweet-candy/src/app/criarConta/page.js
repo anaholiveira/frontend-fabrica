@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 export default function CriarConta() {
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
-    const router = useRouter(); // hook para redirecionamento
+    const router = useRouter();
 
     async function handleSubmit(event) {
         event.preventDefault();

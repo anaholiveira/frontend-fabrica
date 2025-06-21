@@ -162,20 +162,14 @@ export default function Pedido() {
 
     } else {
       if (
-        !pedido.tamanho &&
-        !pedido.recheio &&
-        !pedido.cobertura &&
-        !pedido.corCobertura
+        !pedido.tamanho && !pedido.recheio && !pedido.cobertura && !pedido.corCobertura
       ) {
         alert("Não há pedidos no carrinho nem seleção atual para finalizar.");
         return;
       }
 
       if (
-        !pedido.tamanho ||
-        !pedido.recheio ||
-        !pedido.cobertura ||
-        !pedido.corCobertura
+        !pedido.tamanho || !pedido.recheio || !pedido.cobertura || !pedido.corCobertura
       ) {
         alert("Por favor, selecione todas as opções para finalizar o pedido.");
         return;
@@ -225,7 +219,6 @@ export default function Pedido() {
   return (
     <div>
       <HeaderPedido />
-
       <div className={styles.telaFundo}>
         <Image
           className={styles.carrinho}
