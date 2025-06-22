@@ -65,8 +65,12 @@ const Ingredientes = () => {
       <ul className={styles.ul}>
         {dados[tipo].map((item, index) => (
           <li className={styles.li} key={item.id_ingrediente}>
-            <span className={styles.span}>{index + 1}</span> {item.nome}: R$ {Number(item.valor).toFixed(2)}
-            <button className={styles.button} onClick={() => excluirIngrediente(item.id_ingrediente)}>excluir</button>
+            <div className={styles['li-texto']}>
+              <span className={styles.span}>{index + 1}</span> {item.nome}: R$ {Number(item.valor).toFixed(2)}
+            </div>
+            <div className={styles['li-botoes']}>
+              <button className={styles.button} onClick={() => excluirIngrediente(item.id_ingrediente)}>excluir</button>
+            </div>
           </li>
         ))}
       </ul>
