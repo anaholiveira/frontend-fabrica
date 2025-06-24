@@ -57,7 +57,7 @@
   padding: 1rem;
   margin-top: 1rem;
   text-align: left;
-  font-family: 'Nerko One', system-ui;
+  /* REMOVIDO: font-family: 'Nerko One' */
 }
 
 .resumotitle {
@@ -75,7 +75,7 @@
   padding: 1rem;
   margin-top: 1rem;
   text-align: left;
-  font-family: 'Nerko One', system-ui;
+  /* REMOVIDO: font-family: 'Nerko One' */
 }
 
 .p {
@@ -102,11 +102,16 @@
   font-size: 20px;
 }
 
-.link:hover{
+.link:hover {
   color: var(--cor3);
 }
 
 .button:hover {
-  transform:  scale(1.04);
+  transform: scale(1.04);
   box-shadow: 0 1px 15px #ff78e2;
+}
+
+.fixo {
+  font-size: 20px;
+  font-family: 'Nerko One', system-ui;
 }

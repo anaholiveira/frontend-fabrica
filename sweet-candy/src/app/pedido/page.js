@@ -8,7 +8,7 @@ import styles from './page.module.css';
 
 export default function Pedido() {
   const router = useRouter();
-
+  
   const [clienteId, setClienteId] = useState(null);
   const [quantidade, setQuantidade] = useState(1);
   const [pedido, setPedido] = useState({
