@@ -17,7 +17,7 @@ export default function SobreNos() {
 
                 <h2 className={styles.h2}>Nossa proposta</h2>
                 <p className={styles.p}>
-                    Aqui, você pode personalizar cada detalhe do seu cupcake, desde a massa até a embalagem. Queremos que você tenha a liberdade de criar o cupcake perfeito, que atenda exatamente ao seu gosto, de forma prática e rápida.
+                    Aqui, você pode personalizar cada detalhe do seu cupcake. Queremos que você tenha a liberdade de criar o cupcake perfeito, que atenda exatamente ao seu gosto, de forma prática e rápida.
                 </p>
 
                 <h2 className={styles.h2}>Nossa equipe</h2>

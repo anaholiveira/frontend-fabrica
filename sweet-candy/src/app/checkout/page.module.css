@@ -97,9 +97,9 @@
   color: var(--cor4);
   font-size: 14px;
   cursor: pointer;
-  transition: background 0.3s;
   font-family: 'Nerko One', system-ui;
   font-size: 20px;
+  transition: transform 0.2s ease;
 }
 
 .link:hover {

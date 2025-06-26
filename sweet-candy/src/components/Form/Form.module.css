@@ -1,4 +1,4 @@
-.label{
+.label {
     font-size: 23px;
     display: block;
     margin-top: 10px;
@@ -7,7 +7,7 @@
     margin-left: 20px;
 }
 
-.input{
+.input {
     border-radius: 8px;
     border: none;
     width: 90%;
@@ -23,12 +23,12 @@
    color: var(--cor4);
 }
 
-.icones{
+.icones {
     position: absolute;
     margin-left: 20px;
 }
 
-.button{
+.button {
     display: block;
     margin: auto;
     margin-bottom: 10px;
@@ -42,6 +42,7 @@
     width: 90%;
     cursor: pointer;
     color: var(--cor4);
+    transition: transform 0.2s ease;
 }
 
 .link{
@@ -51,6 +52,6 @@
 
 .link:hover, .button:hover{
     color: var(--cor3);
-    transform: scale(1.04);
+    transform: scale(1.01);
     box-shadow: 0 1px 15px #ff78e2;
 }

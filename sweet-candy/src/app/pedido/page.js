@@ -8,7 +8,6 @@ import styles from './page.module.css';
 
 export default function Pedido() {
   const router = useRouter();
-  
   const [clienteId, setClienteId] = useState(null);
   const [quantidade, setQuantidade] = useState(1);
   const [pedido, setPedido] = useState({
@@ -81,6 +80,7 @@ export default function Pedido() {
     const item = lista.find(i => String(i.id_ingrediente) === String(id));
     return item ? item.nome : "";
   };
+
   const buscarValorIngrediente = (tipo, id) => {
     const lista = ingredientesAPI[tipo === 'corCobertura' ? 'cor_cobertura' : tipo];
     const item = lista.find(i => String(i.id_ingrediente) === String(id));
@@ -143,71 +143,67 @@ export default function Pedido() {
   };
 
   const finalizarPedido = async () => {
-  if (!clienteId) {
-    alert("Erro: clienteId não disponível.");
-    return;
-  }
-
-  try {
-    if (carrinho.length > 0) {
-      const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/finalizarPedido", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id_cliente: clienteId }),
-      });
-
-      const resposta = await res.json();
-      if (!res.ok) throw new Error(resposta.mensagem || "Erro ao finalizar pedido do carrinho");
-      alert(resposta.mensagem);
-
-    } else {
-      if (
-        !pedido.tamanho && !pedido.recheio && !pedido.cobertura && !pedido.corCobertura
-      ) {
-        alert("Não há pedidos no carrinho nem seleção atual para finalizar.");
-        return;
-      }
-
-      if (
-        !pedido.tamanho || !pedido.recheio || !pedido.cobertura || !pedido.corCobertura
-      ) {
-        alert("Por favor, selecione todas as opções para finalizar o pedido.");
-        return;
-      }
-
-      const ingredientes = [
-        Number(pedido.tamanho),
-        Number(pedido.recheio),
-        Number(pedido.cobertura),
-        Number(pedido.corCobertura)
-      ];
-
-      const dadosParaAPI = {
-        id_cliente: clienteId,
-        ingredientes,
-        quantidade
-      };
-
-      const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/fazerPedidoDireto", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dadosParaAPI),
-      });
-
-      const resposta = await res.json();
-      if (!res.ok) throw new Error(resposta.mensagem || "Erro ao fazer pedido");
-      alert(resposta.mensagem);
+    if (!clienteId) {
+      alert("Erro: clienteId não disponível.");
+      return;
     }
 
-    reset();
-    setMostrarCarrinho(false);
-    buscarCarrinho();
-    router.push("/checkout");
+    try {
+      if (carrinho.length > 0) {
+        const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/finalizarPedido", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id_cliente: clienteId }),
+        });
 
-  } catch (error) {
-    alert("Erro ao finalizar: " + error.message);
-  }
-};
+        const resposta = await res.json();
+        if (!res.ok) throw new Error(resposta.mensagem || "Erro ao finalizar pedido do carrinho");
+        alert(resposta.mensagem);
+
+      } else {
+        if (!pedido.tamanho && !pedido.recheio && !pedido.cobertura && !pedido.corCobertura) {
+          alert("Não há pedidos no carrinho nem seleção atual para finalizar.");
+          return;
+        }
+
+        if (!pedido.tamanho || !pedido.recheio || !pedido.cobertura || !pedido.corCobertura) {
+          alert("Por favor, selecione todas as opções para finalizar o pedido.");
+          return;
+        }
+
+        const ingredientes = [
+          Number(pedido.tamanho),
+          Number(pedido.recheio),
+          Number(pedido.cobertura),
+          Number(pedido.corCobertura)
+        ];
+
+        const dadosParaAPI = {
+          id_cliente: clienteId,
+          ingredientes,
+          quantidade
+        };
+
+        const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/fazerPedidoDireto", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(dadosParaAPI),
+        });
+
+        const resposta = await res.json();
+        if (!res.ok) throw new Error(resposta.mensagem || "Erro ao fazer pedido");
+        alert(resposta.mensagem);
+      }
+
+      reset();
+      setMostrarCarrinho(false);
+      buscarCarrinho();
+      router.push("/checkout");
+
+    } catch (error) {
+      alert("Erro ao finalizar: " + error.message);
+    }
+  };
 
   const labels = {
     tamanho: "Tamanho",
@@ -235,13 +231,29 @@ export default function Pedido() {
             <div className={styles.detalhesCarrinho}>
               <h2 className={styles.h2}>Carrinho</h2>
               <div className={styles.detalhesDoCupcake}>
-                {carrinho.length === 0 && <p>Seu carrinho está vazio.</p>}
+                {carrinho.length === 0 && <p className={styles.carrinhoVazio}>Seu carrinho está vazio.</p>}
                 {carrinho.map(item => (
                   <div key={item.id_pedido_carrinho} className={styles.itemCarrinho}>
                     <p><span className={styles.tituloCarrinho}>ID Pedido:</span> {item.id_pedido_carrinho}</p>
                     <p><span className={styles.tituloCarrinho}>Ingredientes:</span> {item.ingredientes.split(',').join(', ')}</p>
                     <p><span className={styles.tituloCarrinho}>Quantidade:</span> {item.quantidade}</p>
                     <p><span className={styles.tituloCarrinho}>Valor total:</span> R$ {Number(item.valor_total).toFixed(2)}</p>
+                    <button
+                      className={styles.botaoRemover}
+                      onClick={async () => {
+                        try {
+                          const res = await fetch(`https://apisweetcandy.dev.vilhena.ifro.edu.br/excluirPedidoCarrinho/${item.id_pedido_carrinho}`, {
+                            method: 'DELETE'
+                          });
+                          if (!res.ok) throw new Error("Erro ao remover pedido do carrinho");
+                          const novoCarrinho = carrinho.filter(p => p.id_pedido_carrinho !== item.id_pedido_carrinho);
+                          setCarrinho(novoCarrinho);
+                        } catch (err) {
+                          alert("Erro ao remover pedido: " + err.message);
+                        }
+                      }}
+                    > Remover do carrinho
+                    </button>
                   </div>
                 ))}
               </div>
@@ -257,8 +269,7 @@ export default function Pedido() {
             <div key={index} className={styles.selectContainer}>
               <label className={styles.selectLabel} htmlFor={`select${item}`}>{labels[item]}</label>
               <div className={styles.selectBody}>
-                <select
-                  className={styles.select}
+                <select className={styles.select}
                   name={item}
                   id={`select${item}`}
                   onChange={handleSelectChange}

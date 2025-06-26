@@ -44,6 +44,7 @@
     text-decoration: none;
     margin-bottom: 10px;
     font-family: 'Nerko One', system-ui;
+    transition: transform 0.2s ease;
 }
 
 .link:hover{

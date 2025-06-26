@@ -72,6 +72,7 @@
     margin: auto;
     display: block;
     cursor: pointer;
+    transition: transform 0.2s ease;
 }
 
 .button:hover {

@@ -1,11 +1,11 @@
-.h1{
+.h1 {
     font-family: "Coiny", system-ui;
     text-align: center;
     padding-top: 30px;
     color: var(--cor4);
 }
 
-.form{
+.form {
     background: linear-gradient(#FBD1FF 0%, #FFA4EB 100%);
     width: 350px;
     height: 470px;

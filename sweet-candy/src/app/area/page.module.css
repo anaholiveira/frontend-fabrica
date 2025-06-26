@@ -1,6 +1,6 @@
 .telaFundo {
-    width: 37vw;
-    height: 40vh;
+    width: 35vw;
+    height: 38vh;
     display: flex;
     flex-direction: column;
     gap: 25px;
@@ -28,6 +28,7 @@
     border-radius: 15px;
     cursor: pointer;
     height: 4vh;
+    transition: transform 0.2s ease;
 }
 
 .buttons:hover {

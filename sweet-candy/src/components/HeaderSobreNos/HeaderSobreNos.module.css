@@ -33,6 +33,7 @@
     padding: 10px;
     border-radius: 15px;
     background-color: #fc7de0;
+    transition: transform 0.2s ease;
 }
 
 .entrarCadastrar:hover {

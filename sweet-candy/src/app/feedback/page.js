@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import styles from "./page.module.css";
 import Header from "@/components/Header";
@@ -9,6 +10,7 @@ export default function CadastrarFeedback() {
   const [mensagem, setMensagem] = useState(false);
   const [previews, setPreviews] = useState([]);
   const [estrelasSelecionadas, setEstrelasSelecionadas] = useState([]);
+  const router = useRouter();
 
   function msg(event) {
     const arquivos = Array.from(event.target.files);
@@ -122,11 +124,13 @@ export default function CadastrarFeedback() {
         )}
 
         <div className={styles.buttons}>
-          <Link href="/vendaCupcake">
-            <button className={styles.button} id="back">
-              Voltar
-            </button>
-          </Link>
+          <button
+            className={styles.button}
+            id="back"
+            onClick={() => router.back()}
+          >
+            Voltar
+          </button>
 
           <Link href="/pedido">
             <button className={styles.button} id="confirm">
