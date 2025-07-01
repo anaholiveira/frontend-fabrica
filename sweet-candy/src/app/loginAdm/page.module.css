@@ -1,0 +1,87 @@
+.h1 {
+    font-family: "Coiny", system-ui;
+    text-align: center;
+    padding-top: 30px;
+    color: var(--cor4);
+}
+
+.form {
+    background: linear-gradient(#FBD1FF 0%, #FFA4EB 100%);
+    width: 350px;
+    height: 470px;
+    margin: auto;
+    display: block;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px var(--cor2);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+.label {
+    font-family: "Coiny", system-ui;
+    font-size: 14px;
+    margin-top: 15px;
+    display: block;
+    color: var(--cor4);
+}
+
+.input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.botao {
+    margin-top: 25px;
+    width: 100%;
+    padding: 12px;
+    background-color: var(--botao);
+    color: var(--cor4);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    font-family: "Coiny", system-ui;
+}
+
+.botao:hover {
+    color: var(--cor3);
+    transform: scale(1.04);
+}
+
+.separarInput {
+    margin-top: 30px;
+}
+
+.naoPossuiConta {
+    display: flex;
+    gap: 3px;
+    font-family: "Coiny", system-ui;
+    font-weight: none;
+    margin-top: 20px;
+    margin-left: 23px;
+    color: var(--cor4);
+}
+
+.link {
+    color: #551A8B;
+    text-decoration: underline;
+}
+
+@media (max-width: 393px) {
+    .form {
+        width: 85%;
+    }
+
+    .naoPossuiConta {
+        display: block;
+    }
+}

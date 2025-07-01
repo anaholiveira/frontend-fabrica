@@ -43,13 +43,27 @@ const Checkout = () => {
 
       if (response.ok) {
         alert(data.mensagem || 'Pedido limpo com sucesso!');
-        await fetchResumo(clienteId); // Atualiza o resumo na tela
+        await fetchResumo(clienteId);
       } else {
         alert('Erro ao limpar pedido: ' + (data.erro || 'Erro desconhecido'));
       }
     } catch (error) {
       alert('Erro ao conectar com a API: ' + error.message);
     }
+  };
+
+  const handleFazerPedido = () => {
+    if (!resumo || resumo.quantidade === 0) {
+      alert('Você precisa montar pelo menos 1 cupcake antes de finalizar o pedido.');
+      return;
+    }
+
+    if (!pagamento) {
+      alert('Selecione uma forma de pagamento antes de finalizar o pedido.');
+      return;
+    }
+
+    window.location.href = '/vendaCupcake';
   };
 
   useEffect(() => {
@@ -115,8 +129,8 @@ const Checkout = () => {
           <button className={styles.button}>
             <Link className={styles.link} href="/pedido">Voltar</Link>
           </button>
-          <button className={styles.button}>
-            <Link className={styles.link} href="/vendaCupcake">Fazer pedido</Link>
+          <button className={styles.button} onClick={handleFazerPedido}>
+            <span className={styles.link}>Fazer pedido</span>
           </button>
         </div>
       </div>

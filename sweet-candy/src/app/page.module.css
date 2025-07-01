@@ -11,19 +11,19 @@
   margin-bottom: 37px;
 }
 
-.h1{
+.h1 {
   text-align: center;
   font-size: 40px;
   font-family: "Coiny", system-ui;
   color: var(--cor4);
 }
 
-.h2{
+.h2 {
   font-size: 25px;
   font-family: "Coiny", system-ui;
   color: var(--cor4);
 }
 
-.p{
+.p {
   font-size: 23px;
 }

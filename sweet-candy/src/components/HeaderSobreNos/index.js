@@ -8,7 +8,7 @@ export default function SobreNos() {
             <Image className={styles.logo} src="/images/logosweetcandy.png" alt="Logo Sweet Candy" width={140} height={140}/>
             <nav className={styles.nav}>
                 <ul className={styles.ul}>
-                    <li className={styles.li}><Link className={styles.entrarCadastrar} href="/login">Entrar</Link></li>
+                    <li className={styles.li}><Link className={styles.entrarCadastrar} href="/escolha">Entrar</Link></li>
                 </ul>
             </nav>
         </div>

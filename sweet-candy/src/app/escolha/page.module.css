@@ -1,0 +1,35 @@
+.fundo{
+    padding-top: 1%;
+    width: 300px;
+    height: 150px;
+    background: linear-gradient(#FBD1FF 0%, #FFA4EB 100%);
+    border-radius: 20px;
+    box-sizing: border-box;
+    box-shadow: 0 5px 15px var(--cor2);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    margin: auto;
+    color: var(--cor4);
+    font-family: "Coiny", system-ui;
+}
+
+.button{
+    background-color: var(--botao);
+    width: 80%;
+    padding: 9px 20px;
+    font-family: "Coiny", system-ui;
+    cursor: pointer;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    border: none;
+    border-radius: 25px;
+    color: var(--cor4);
+    font-family: "Coiny", system-ui;
+}
+
+.button:hover {
+    color: var(--cor3);
+    transform: scale(1.04);
+}
