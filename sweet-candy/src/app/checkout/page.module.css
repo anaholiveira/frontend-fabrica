@@ -57,6 +57,7 @@
   padding: 1rem;
   margin-top: 1rem;
   text-align: left;
+  /* REMOVIDO: font-family: 'Nerko One' */
 }
 
 .resumotitle {
@@ -74,6 +75,7 @@
   padding: 1rem;
   margin-top: 1rem;
   text-align: left;
+  /* REMOVIDO: font-family: 'Nerko One' */
 }
 
 .p {
@@ -133,7 +135,8 @@
   padding: 0.4rem 0.6rem;
   border-radius: 10px;
   border: 1px solid #ccc;
-  font-size: 16px;
-  font-family: 'Nerko One', system-ui;
-  margin-top: 0.2rem;
+  font-size: 14px;
+  font-family: sans-serif;
+  font-weight: normal;
+  margin-top: 0.1rem;
 }

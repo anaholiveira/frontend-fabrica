@@ -36,26 +36,23 @@ const Checkout = () => {
     }
   }
 
-  const handleEnderecoChange = (e) => {
+    const handleEnderecoChange = (e) => {
     const { name, value } = e.target;
     let novoValor = value;
 
     if (name === 'numero') {
-      novoValor = value.replace(/\D/g, '');
+        novoValor = value.replace(/\D/g, '');
     }
 
     if (name === 'cep') {
-      novoValor = value
-        .replace(/[^\d-]/g, '')
-        
-        .replace(/(?!^)\-+/g, '-')
-        
-        .slice(0, 9);
-        
+        novoValor = value
+        .replace(/\D/g, '')
+        .slice(0, 8)
+        .replace(/^(\d{5})(\d{0,3})$/, '$1-$2');
     }
 
     setEndereco((prev) => ({ ...prev, [name]: novoValor }));
-  };
+    };
 
   const handleLimparPedido = async () => {
     const clienteId = localStorage.getItem('clienteId');
