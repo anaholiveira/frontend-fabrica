@@ -57,13 +57,12 @@
   padding: 1rem;
   margin-top: 1rem;
   text-align: left;
-  /* REMOVIDO: font-family: 'Nerko One' */
 }
 
 .resumotitle {
   color: var(--cor4);
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
   font-weight: bold;
   font-size: 25px;
   font-family: 'Coiny', system-ui;
@@ -75,7 +74,6 @@
   padding: 1rem;
   margin-top: 1rem;
   text-align: left;
-  /* REMOVIDO: font-family: 'Nerko One' */
 }
 
 .p {
@@ -114,4 +112,28 @@
 .fixo {
   font-size: 20px;
   font-family: 'Nerko One', system-ui;
+}
+
+.bloco {
+  background-color: white;
+  border-radius: 15px;
+  padding: 0.8rem;
+  margin-top: 0.3rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.3rem 1.1rem;
+}
+
+.fullRow {
+  grid-column: 1 / -1;
+}
+
+.inputTexto {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  font-family: 'Nerko One', system-ui;
+  margin-top: 0.2rem;
 }

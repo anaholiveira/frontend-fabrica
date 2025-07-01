@@ -1,11 +1,11 @@
 .telaFundo {
-    width: 35vw;
-    height: 38vh;
+    width: 33vw;
+    height: 34vh;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 20px;
     background: linear-gradient(#FBD1FF 0%, #FFA4EB 100%);
-    border-radius: 20px;
+    border-radius: 25px;
     box-sizing: border-box;
     box-shadow: 0 5px 15px var(--cor2);
     align-items: center;
@@ -32,7 +32,7 @@
 }
 
 .buttons:hover {
-    transform: scale(1.05);
+    transform: scale(1.04);
     box-shadow: 0 1px 5px rgb(247, 247, 247);
 }
 
@@ -40,8 +40,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 50px;
-    width: 28vw;
+    gap: 40px;
+    width: 27vw;
 }
 
 .links {

@@ -2,6 +2,7 @@
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import styles from './page.module.css';
+import { Formulario, Botao } from '@/components/Form';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -40,29 +41,33 @@ export default function LoginAdm() {
             <form className={styles.form} onSubmit={handleSubmit}>
                 <h1 className={styles.h1}>Fazer login</h1>
 
-                <label className={styles.label} htmlFor="email">E-mail:</label>
-                <input 
-                    type="text" 
+                <Formulario 
                     name="email" 
+                    text="E-mail" 
+                    type="text" 
                     id="email" 
-                    placeholder="Digite seu e-mail" 
-                    className={styles.input} 
+                    placeholder="Digite seu e-mail"
+                    src="/images/email.png"
+                    alt="E-mail: "
                     required 
                 />
 
                 <div className={styles.separarInput}>
-                    <label className={styles.label} htmlFor="senha">Senha:</label>
-                    <input 
-                        type="password" 
-                        name="senha" 
-                        id="senha" 
-                        placeholder="Digite sua senha" 
-                        className={styles.input} 
+                    <Formulario 
+                        name="senha"
+                        text="Senha"
+                        type="password"
+                        placeholder="Digite sua senha"
+                        src="/images/senha.png"
+                        alt="Senha: "
                         required 
                     />
                 </div>
 
-                <button type="submit" className={styles.botao}>Entrar</button>
+                <Botao
+                    type="submit"
+                    text="Entrar"
+                />
             </form>
             <Footer />
         </div>
