@@ -1,10 +1,12 @@
 'use client';
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 
 const Checkout = () => {
+  const router = useRouter();
   const [pagamento, setPagamento] = useState('');
   const [resumo, setResumo] = useState(null);
   const [carregandoCep, setCarregandoCep] = useState(false);
@@ -22,19 +24,16 @@ const Checkout = () => {
       setCarregandoCep(true);
       const response = await fetch(`https://viacep.com.br/ws/${cepNumerico}/json/`);
       const data = await response.json();
-
       if (data.erro) {
         alert('CEP não encontrado. Verifique os dados e tente novamente.');
         return;
       }
-
       setEndereco((prev) => ({
         ...prev,
         rua: data.logradouro || '',
         bairro: data.bairro || '',
       }));
-    } catch (err) {
-      console.error('Erro ao buscar CEP:', err);
+    } catch {
       alert('Não foi possível buscar o CEP. Tente novamente mais tarde.');
     } finally {
       setCarregandoCep(false);
@@ -47,8 +46,7 @@ const Checkout = () => {
       const data = await res.json();
       if (res.ok) setResumo(data);
       else setResumo(null);
-    } catch (err) {
-      console.error('Erro ao obter resumo:', err);
+    } catch {
       setResumo(null);
     }
   };
@@ -58,13 +56,8 @@ const Checkout = () => {
     let novoValor = value;
 
     if (name === 'numero') novoValor = value.replace(/\D/g, '');
-
     if (name === 'cep') {
-      novoValor = value
-        .replace(/\D/g, '')
-        .slice(0, 8)
-        .replace(/^(\d{5})(\d{0,3})$/, '$1-$2');
-
+      novoValor = value.replace(/\D/g, '').slice(0, 8).replace(/^(\d{5})(\d{0,3})$/, '$1-$2');
       const cepNums = novoValor.replace(/\D/g, '');
       if (cepNums.length === 8) fetchCepData(cepNums);
     }
@@ -74,8 +67,7 @@ const Checkout = () => {
 
   const handleLimparPedido = async () => {
     const clienteId = localStorage.getItem('clienteId');
-    if (!clienteId)
-      return alert('Não foi possível identificar o cliente. Faça login novamente.');
+    if (!clienteId) return alert('Não foi possível identificar o cliente. Faça login novamente.');
 
     try {
       const res = await fetch(
@@ -84,12 +76,12 @@ const Checkout = () => {
       );
       const data = await res.json();
       if (res.ok) {
-        alert(data.mensagem || 'Pedidos pendentes removidos com sucesso.');
-        await fetchResumo(clienteId);
+        alert('Pedidos cancelados com sucesso!');
+        router.push('/pedido');
       } else {
-        alert(data.erro || 'Ocorreu um erro ao tentar limpar os pedidos.');
+        alert(data.erro || 'Ocorreu um erro ao tentar cancelar os pedidos.');
       }
-    } catch (err) {
+    } catch {
       alert('Erro ao conectar com a API. Por favor, tente novamente mais tarde.');
     }
   };
@@ -110,19 +102,50 @@ const Checkout = () => {
       return alert('Não foi possível identificar o cliente. Faça login novamente.');
 
     try {
-      const res = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/endereco', {
+      const resEndereco = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/endereco', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_cliente: clienteId, ...endereco }),
       });
-      const data = await res.json();
-      if (!res.ok)
-        return alert(data.erro || 'Erro ao salvar o endereço. Verifique os dados e tente novamente.');
-    } catch (err) {
+      const dataEndereco = await resEndereco.json();
+      if (!resEndereco.ok)
+        return alert(dataEndereco.erro || 'Erro ao salvar o endereço. Verifique os dados e tente novamente.');
+    } catch {
       return alert('Erro ao conectar-se à API de endereço. Por favor, tente novamente mais tarde.');
     }
 
-    window.location.href = '/vendaCupcake';
+    const formaPagamentoConvertida = pagamento === 'maquina' ? 'cartao' : pagamento;
+
+    const payload = {
+      id_cliente: parseInt(clienteId),
+      forma_pagamento: formaPagamentoConvertida,
+      quantidade: Number(resumo.quantidade),
+      valor_total: Number(resumo.total),
+      taxaServico: Number(resumo.taxaServico),
+      taxaEntrega: Number(resumo.taxaEntrega),
+    };
+
+    try {
+      const response = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/resumo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        return alert(data.erro || 'Erro ao finalizar o pedido.');
+      }
+
+      alert('Pedido feito com sucesso!');
+      router.push('/vendaCupcake');
+
+      setPagamento('');
+      setEndereco({ rua: '', numero: '', cep: '', bairro: '', complemento: '' });
+      await fetchResumo(clienteId);
+    } catch {
+      alert('Erro ao conectar com a API de pedido. Tente novamente.');
+    }
   };
 
   useEffect(() => {
@@ -134,7 +157,6 @@ const Checkout = () => {
   return (
     <div>
       <Header />
-
       <div className={styles.container}>
         <h1 className={styles.h1}>Checkout</h1>
 
@@ -245,7 +267,6 @@ const Checkout = () => {
           </button>
         </div>
       </div>
-
       <Footer />
     </div>
   );
