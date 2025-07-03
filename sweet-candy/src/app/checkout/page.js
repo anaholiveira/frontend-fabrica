@@ -76,7 +76,7 @@ const Checkout = () => {
       );
       const data = await res.json();
       if (res.ok) {
-        alert('Pedidos cancelados com sucesso!');
+        alert('Pedidos cancelados!');
         router.push('/pedido');
       } else {
         alert(data.erro || 'Ocorreu um erro ao tentar cancelar os pedidos.');
