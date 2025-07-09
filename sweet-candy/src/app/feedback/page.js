@@ -1,7 +1,6 @@
-"use client";
-import { useState } from "react";
+'use client';
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import styles from "./page.module.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -10,7 +9,26 @@ export default function CadastrarFeedback() {
   const [mensagem, setMensagem] = useState(false);
   const [previews, setPreviews] = useState([]);
   const [estrelasSelecionadas, setEstrelasSelecionadas] = useState([]);
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [feedbackText, setFeedbackText] = useState("");
+  const [feedbacksRecentes, setFeedbacksRecentes] = useState([]);
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const clienteId = localStorage.getItem('clienteId');
+      if (!clienteId) {
+        alert('Você precisa estar logado para dar feedback.');
+        router.push('/login');
+      }
+    }
+  }, [router]);
+
+  useEffect(() => {
+    if (mostrarModal) {
+      fetchFeedbacks();
+    }
+  }, [mostrarModal]);
 
   function msg(event) {
     const arquivos = Array.from(event.target.files);
@@ -44,6 +62,86 @@ export default function CadastrarFeedback() {
     });
   }
 
+  async function handleSubmitFeedback() {
+    const clienteId = typeof window !== 'undefined' ? localStorage.getItem('clienteId') : null;
+
+    if (!clienteId) {
+      alert('Você precisa estar logado para enviar o feedback.');
+      router.push('/login');
+      return;
+    }
+
+    if (estrelasSelecionadas.length === 0) {
+      alert('Por favor, selecione uma avaliação em estrelas.');
+      return;
+    }
+
+    if (!feedbackText.trim()) {
+      alert('Por favor, digite seu feedback.');
+      return;
+    }
+
+    const fotosBase64 = await Promise.all(
+      previews.map(async (previewUrl) => {
+        const response = await fetch(previewUrl);
+        const blob = await response.blob();
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+      })
+    );
+
+    const feedbackData = {
+      id_cliente: parseInt(clienteId),
+      estrelas: estrelasSelecionadas.length,
+      comentario: feedbackText,
+      foto: fotosBase64.length > 0 ? fotosBase64[0] : null,
+    };
+
+    try {
+      const response = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/feedbacks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(feedbackData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Feedback enviado com sucesso! Agradecemos sua avaliação.');
+        setEstrelasSelecionadas([]);
+        setFeedbackText("");
+        setPreviews([]);
+        router.push('/pedido');
+      } else {
+        alert(`Erro ao enviar feedback: ${data.erro || 'Erro desconhecido'}`);
+      }
+    } catch (error) {
+      console.error('Erro aoa conectar com a API de envio:', error);
+      alert('Não foi possível conectar com o servidor para enviar o feedback.');
+    }
+  }
+
+  async function fetchFeedbacks() {
+    try {
+      const response = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/feedbacks');
+      if (!response.ok) {
+        throw new Error(`Erro HTTP! Status: ${response.status}`);
+      }
+      const data = await response.json();
+      setFeedbacksRecentes(data);
+    } catch (error) {
+      console.error('Erro ao buscar feedbacks:', error);
+      alert('Não foi possível carregar os feedbacks recentes.');
+      setFeedbacksRecentes([]);
+    }
+  }
+
   return (
     <div>
       <Header />
@@ -72,6 +170,8 @@ export default function CadastrarFeedback() {
             className={styles.input}
             type="text"
             placeholder="Digite seu feedback..."
+            value={feedbackText}
+            onChange={(e) => setFeedbackText(e.target.value)}
           />
         </label>
 
@@ -132,13 +232,67 @@ export default function CadastrarFeedback() {
             Voltar
           </button>
 
-          <Link href="/pedido">
-            <button className={styles.button} id="confirm">
-              Confirmar
-            </button>
-          </Link>
+          <button
+            className={styles.button}
+            id="confirm"
+            onClick={handleSubmitFeedback}
+          >
+            Confirmar
+          </button>
+
+          <button
+            className={styles.button}
+            onClick={() => setMostrarModal(true)}
+          >
+            Ver Feedbacks Recentes
+          </button>
         </div>
       </div>
+
+      {mostrarModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <button
+              className={styles.fechar}
+              onClick={() => setMostrarModal(false)}
+            >
+              ×
+            </button>
+            <h2 className={styles.h2}>Feedbacks Recentes</h2>
+
+            {feedbacksRecentes.length > 0 ? (
+              feedbacksRecentes.map((feedback) => (
+                <div key={feedback.id_feedback} className={styles.feedbackItem}>
+                  <div className={styles.feedbackInfo}>
+                    <span className={styles.clienteNome}>
+                      {feedback.nome_cliente || `Cliente ${feedback.id_cliente}`}
+                    </span>
+                    <span className={styles.dataFeedback}>
+                      {new Date(feedback.data_criacao + 'Z').toLocaleDateString('pt-BR')}
+                    </span>
+                  </div>
+                  <div className={styles.estrelas}>
+                    {'★'.repeat(feedback.estrelas)}{'☆'.repeat(5 - feedback.estrelas)}
+                  </div>
+                  <p className={styles.comentario}>
+                    {feedback.comentario}
+                  </p>
+                  {feedback.foto && (
+                    <div className={styles.feedbackImagens}>
+                      <img src={feedback.foto} alt="Imagem do Feedback" />
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p style={{ textAlign: 'center', color: '#666' }}>
+                Nenhum feedback encontrado ainda. Seja o primeiro a comentar!
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       <Footer />
     </div>
   );

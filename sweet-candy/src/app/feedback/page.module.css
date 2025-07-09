@@ -57,9 +57,23 @@
 .buttons {
     margin-top: 15px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    flex-wrap: wrap; /* Permite que os itens quebrem a linha */
+    gap: 10px; /* Espaçamento entre os botões */
+    justify-content: center; /* Centraliza os botões na linha */
 }
+
+.buttons button:nth-child(1),
+.buttons button:nth-child(2) {
+    flex: 1 1 calc(50% - 10px); /* Ocupa cerca de metade da largura, considerando o gap */
+    max-width: 150px; /* Limite de largura para cada botão */
+}
+
+.buttons button:nth-child(3) {
+    flex-basis: 100%; /* Força o terceiro botão a ocupar a largura total e ir para a próxima linha */
+    max-width: none; /* Remove qualquer limite de largura para este botão */
+    margin-top: 3px; /* Adiciona um espaço acima do terceiro botão */
+}
+/* === FIM DA MODIFICAÇÃO === */
 
 .button {
     font-family: Nerko One;
@@ -191,4 +205,158 @@
   padding: 0;
   line-height: 12px;
   text-align: center;
+}
+
+.feedbacksContainer {
+  margin-top: 30px;
+  padding: 15px;
+  border-radius: 10px;
+  background: linear-gradient(#fff0fa, #ffe2f4);
+  box-shadow: 0 2px 8px rgba(255, 105, 180, 0.2);
+}
+
+.h2 {
+  font-family: "Coiny", system-ui;
+  text-align: center;
+  font-size: 22px;
+  color: var(--cor4);
+  margin-bottom: 15px;
+}
+
+.feedbackItem {
+  border: 2px dashed #ffc6f3;
+  border-radius: 10px;
+  padding: 15px;
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+.estrelas {
+  font-size: 20px;
+  color: #f39c12;
+  margin-bottom: 5px;
+  text-align: left;
+}
+
+.comentario {
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.feedbackImagens {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.feedbackImagens img {
+  width: 60px;
+  height: 60px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 2px solid #fd99ce;
+  box-shadow: 0 2px 5px rgba(255, 182, 193, 0.3);
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  backdrop-filter: blur(4px);
+}
+
+.modal {
+  background: linear-gradient(#fff0fa, #ffe2f4);
+  border-radius: 15px;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80%;
+  overflow-y: auto;
+  box-shadow: 0 5px 25px rgba(255, 105, 180, 0.3);
+  position: relative;
+  animation: fadeIn 0.3s ease-in-out;
+
+  /* Oculta a barra de rolagem */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.modal::-webkit-scrollbar {
+  display: none; /* Chrome, Safari e Opera */
+}
+
+.fechar {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: #fc7de0;
+  color: white;
+  border: none;
+  font-size: 20px;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.feedbackInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  color: #888;
+}
+
+.clienteNome {
+  font-weight: bold;
+  color: #c750a5;
+}
+
+.dataFeedback {
+  font-style: italic;
+  color: #b56d9b;
+}
+
+.feedbackInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  font-family: "Coiny", system-ui;
+  font-size: 15px;
+  color: #c15597;
+}
+
+.clienteNome {
+  font-weight: bold;
+  color: #e538a0;
+}
+
+.dataFeedback {
+  font-size: 13px;
+  color: #a76c94;
 }
