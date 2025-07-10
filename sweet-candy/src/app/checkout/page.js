@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
-import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const Checkout = () => {
   const router = useRouter();
@@ -25,7 +25,7 @@ const Checkout = () => {
       const response = await fetch(`https://viacep.com.br/ws/${cepNumerico}/json/`);
       const data = await response.json();
       if (data.erro) {
-        alert('CEP não encontrado. Verifique os dados e tente novamente.');
+        alert('CEP não encontrado.');
         return;
       }
       setEndereco((prev) => ({
@@ -34,7 +34,7 @@ const Checkout = () => {
         bairro: data.bairro || '',
       }));
     } catch {
-      alert('Não foi possível buscar o CEP. Tente novamente mais tarde.');
+      alert('Erro ao buscar CEP.');
     } finally {
       setCarregandoCep(false);
     }
@@ -67,7 +67,7 @@ const Checkout = () => {
 
   const handleLimparPedido = async () => {
     const clienteId = localStorage.getItem('clienteId');
-    if (!clienteId) return alert('Não foi possível identificar o cliente. Faça login novamente.');
+    if (!clienteId) return alert('Cliente não identificado.');
 
     try {
       const res = await fetch(
@@ -79,27 +79,27 @@ const Checkout = () => {
         alert('Pedidos cancelados!');
         router.push('/pedido');
       } else {
-        alert(data.erro || 'Ocorreu um erro ao tentar cancelar os pedidos.');
+        alert(data.erro || 'Erro ao cancelar pedidos.');
       }
     } catch {
-      alert('Erro ao conectar com a API. Por favor, tente novamente mais tarde.');
+      alert('Erro ao conectar com a API.');
     }
   };
 
   const handleFazerPedido = async () => {
     if (!resumo || resumo.quantidade === 0)
-      return alert('Adicione pelo menos um cupcake antes de prosseguir com o pedido.');
+      return alert('Adicione pelo menos um cupcake antes de continuar.');
 
     if (!pagamento)
-      return alert('Selecione uma forma de pagamento antes de finalizar o pedido.');
+      return alert('Selecione uma forma de pagamento.');
 
     const { rua, numero, cep, bairro } = endereco;
     if (!rua || !numero || !cep || !bairro)
-      return alert('Preencha todos os campos obrigatórios do endereço antes de continuar.');
+      return alert('Preencha todos os campos do endereço.');
 
     const clienteId = localStorage.getItem('clienteId');
     if (!clienteId)
-      return alert('Não foi possível identificar o cliente. Faça login novamente.');
+      return alert('Cliente não identificado.');
 
     try {
       const resEndereco = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/endereco', {
@@ -109,9 +109,9 @@ const Checkout = () => {
       });
       const dataEndereco = await resEndereco.json();
       if (!resEndereco.ok)
-        return alert(dataEndereco.erro || 'Erro ao salvar o endereço. Verifique os dados e tente novamente.');
+        return alert(dataEndereco.erro || 'Erro ao salvar o endereço.');
     } catch {
-      return alert('Erro ao conectar-se à API de endereço. Por favor, tente novamente mais tarde.');
+      return alert('Erro na API de endereço.');
     }
 
     const formaPagamentoConvertida = pagamento === 'maquina' ? 'cartao' : pagamento;
@@ -119,10 +119,7 @@ const Checkout = () => {
     const payload = {
       id_cliente: parseInt(clienteId),
       forma_pagamento: formaPagamentoConvertida,
-      quantidade: Number(resumo.quantidade),
-      valor_total: Number(resumo.total),
-      taxaServico: Number(resumo.taxaServico),
-      taxaEntrega: Number(resumo.taxaEntrega),
+      valor_total: resumo.total,
     };
 
     try {
@@ -138,21 +135,20 @@ const Checkout = () => {
       }
 
       alert('Pedido feito com sucesso!');
-
       setPagamento('');
       setEndereco({ rua: '', numero: '', cep: '', bairro: '', complemento: '' });
       setResumo(null);
 
       router.push('/vendaCupcake');
     } catch {
-      alert('Erro ao conectar com a API de pedido. Tente novamente.');
+      alert('Erro ao conectar com a API de pedido.');
     }
   };
 
   useEffect(() => {
     const clienteId = localStorage.getItem('clienteId');
     if (clienteId) fetchResumo(clienteId);
-    else alert('Cliente não identificado. Realize o login novamente para continuar.');
+    else alert('Cliente não identificado.');
   }, []);
 
   return (
