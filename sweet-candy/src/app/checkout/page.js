@@ -138,11 +138,12 @@ const Checkout = () => {
       }
 
       alert('Pedido feito com sucesso!');
-      router.push('/vendaCupcake');
 
       setPagamento('');
       setEndereco({ rua: '', numero: '', cep: '', bairro: '', complemento: '' });
-      await fetchResumo(clienteId);
+      setResumo(null);
+
+      router.push('/vendaCupcake');
     } catch {
       alert('Erro ao conectar com a API de pedido. Tente novamente.');
     }

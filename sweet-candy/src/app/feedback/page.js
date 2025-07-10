@@ -1,28 +1,18 @@
-'use client';
+"use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { useRouter } from "next/navigation";
 
 export default function CadastrarFeedback() {
   const [mensagem, setMensagem] = useState(false);
-  const [previews, setPreviews] = useState([]);
+  const [preview, setPreview] = useState(null);
   const [estrelasSelecionadas, setEstrelasSelecionadas] = useState([]);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [feedbackText, setFeedbackText] = useState("");
   const [feedbacksRecentes, setFeedbacksRecentes] = useState([]);
   const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const clienteId = localStorage.getItem('clienteId');
-      if (!clienteId) {
-        alert('Você precisa estar logado para dar feedback.');
-        router.push('/login');
-      }
-    }
-  }, [router]);
 
   useEffect(() => {
     if (mostrarModal) {
@@ -31,26 +21,17 @@ export default function CadastrarFeedback() {
   }, [mostrarModal]);
 
   function msg(event) {
-    const arquivos = Array.from(event.target.files);
-    const arquivosRestantes = 3 - previews.length;
+    const arquivo = event.target.files[0];
+    if (!arquivo) return;
 
-    if (arquivosRestantes <= 0) {
-      alert("Você só pode adicionar até 3 imagens.");
-      return;
-    }
-
-    const selecionadas = arquivos.slice(0, arquivosRestantes);
-    const novasPreviews = selecionadas.map((arquivo) =>
-      URL.createObjectURL(arquivo)
-    );
-
-    setPreviews((prev) => [...prev, ...novasPreviews]);
+    const novaPreview = URL.createObjectURL(arquivo);
+    setPreview(novaPreview);
     setMensagem(true);
     setTimeout(() => setMensagem(false), 3000);
   }
 
-  function removerPreview(index) {
-    setPreviews((prev) => prev.filter((_, i) => i !== index));
+  function removerPreview() {
+    setPreview(null);
   }
 
   function toggleEstrela(num) {
@@ -63,84 +44,102 @@ export default function CadastrarFeedback() {
   }
 
   async function handleSubmitFeedback() {
-    const clienteId = typeof window !== 'undefined' ? localStorage.getItem('clienteId') : null;
-
-    if (!clienteId) {
-      alert('Você precisa estar logado para enviar o feedback.');
-      router.push('/login');
-      return;
-    }
-
     if (estrelasSelecionadas.length === 0) {
-      alert('Por favor, selecione uma avaliação em estrelas.');
+      alert("Por favor, selecione uma avaliação em estrelas.");
       return;
     }
 
     if (!feedbackText.trim()) {
-      alert('Por favor, digite seu feedback.');
+      alert("Por favor, digite seu feedback.");
       return;
     }
 
-    const fotosBase64 = await Promise.all(
-      previews.map(async (previewUrl) => {
-        const response = await fetch(previewUrl);
+    let fotoBase64 = "";
+
+    if (preview) {
+      try {
+        const response = await fetch(preview);
         const blob = await response.blob();
-        return new Promise((resolve, reject) => {
+        fotoBase64 = await new Promise((resolve, reject) => {
           const reader = new FileReader();
           reader.onloadend = () => resolve(reader.result);
           reader.onerror = reject;
           reader.readAsDataURL(blob);
         });
-      })
-    );
+      } catch (error) {
+        console.error("Erro ao processar a imagem:", error);
+        alert("Erro ao processar a imagem. Tente novamente.");
+        return;
+      }
+    }
 
     const feedbackData = {
-      id_cliente: parseInt(clienteId),
+      id_cliente: 1,
       estrelas: estrelasSelecionadas.length,
       comentario: feedbackText,
-      foto: fotosBase64.length > 0 ? fotosBase64[0] : null,
+      foto: fotoBase64,
     };
 
     try {
-      const response = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/feedbacks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(feedbackData),
-      });
+      const response = await fetch(
+        "https://apisweetcandy.dev.vilhena.ifro.edu.br/feedbacks",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(feedbackData),
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
-        alert('Feedback enviado com sucesso! Agradecemos sua avaliação.');
+        alert("Feedback enviado com sucesso! Agradecemos sua avaliação.");
         setEstrelasSelecionadas([]);
         setFeedbackText("");
-        setPreviews([]);
-        router.push('/pedido');
+        setPreview(null);
+        router.push("/pedido");
       } else {
-        alert(`Erro ao enviar feedback: ${data.erro || 'Erro desconhecido'}`);
+        alert(`Erro ao enviar feedback: ${data.erro || "Erro desconhecido"}`);
       }
     } catch (error) {
-      console.error('Erro aoa conectar com a API de envio:', error);
-      alert('Não foi possível conectar com o servidor para enviar o feedback.');
+      console.error("Erro ao conectar com a API de envio:", error);
+      alert(`Não foi possível conectar com o servidor para enviar o feedback.\nErro: ${error.message || error}`);
     }
   }
 
   async function fetchFeedbacks() {
     try {
-      const response = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/feedbacks');
+      const response = await fetch(
+        "https://apisweetcandy.dev.vilhena.ifro.edu.br/feedbacks"
+      );
       if (!response.ok) {
         throw new Error(`Erro HTTP! Status: ${response.status}`);
       }
       const data = await response.json();
       setFeedbacksRecentes(data);
     } catch (error) {
-      console.error('Erro ao buscar feedbacks:', error);
-      alert('Não foi possível carregar os feedbacks recentes.');
+      console.error("Erro ao buscar feedbacks:", error);
+      alert("Não foi possível carregar os feedbacks recentes.");
       setFeedbacksRecentes([]);
     }
   }
+
+function formatarDataBR(dataISO) {
+  try {
+
+    const dataUtc = new Date(dataISO);
+
+    const formatter = new Intl.DateTimeFormat("pt-BR", {
+      timeZone: "America/Porto_Velho",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+    return formatter.format(dataUtc);
+  } catch {
+    return dataISO;
+  }
+}
 
   return (
     <div>
@@ -176,13 +175,12 @@ export default function CadastrarFeedback() {
         </label>
 
         <label className={styles.label} htmlFor="image" id="file" tabIndex="0">
-          <span className={styles.filee}> Carregue fotos 1/3</span>
+          <span className={styles.filee}> Carregue uma foto</span>
           <input
             className={`${styles.input} ${styles.image}`}
             type="file"
             id="image"
             accept="image/*"
-            multiple
             onChange={msg}
           />
           <span>
@@ -194,28 +192,19 @@ export default function CadastrarFeedback() {
           </span>
         </label>
 
-        {previews.length > 0 && (
+        {preview && (
           <div className={styles.containerPrevia}>
-            {previews.map((src, index) => (
-              <div
-                key={index}
-                style={{ position: "relative", display: "inline-block" }}
+            <div className={styles.previewWrapper}>
+              <img src={preview} alt="prévia" className={styles.imagemPrevia} />
+              <button
+                type="button"
+                onClick={removerPreview}
+                aria-label="Remover imagem"
+                className={styles.botaoRemoverImagem}
               >
-                <img
-                  src={src}
-                  alt={`prévia ${index + 1}`}
-                  className={styles.imagemPrevia}
-                />
-                <button
-                  type="button"
-                  onClick={() => removerPreview(index)}
-                  aria-label="Remover imagem"
-                  className={styles.botaoRemoverImagem}
-                >
-                  ×
-                </button>
-              </div>
-            ))}
+                ×
+              </button>
+            </div>
           </div>
         )}
 
@@ -250,8 +239,14 @@ export default function CadastrarFeedback() {
       </div>
 
       {mostrarModal && (
-        <div className={styles.modalOverlay}>
-          <div className={styles.modal}>
+        <div
+          className={styles.modalOverlay}
+          onClick={() => setMostrarModal(false)} // Fecha ao clicar fora
+        >
+          <div
+            className={styles.modal}
+            onClick={(e) => e.stopPropagation()} // Bloqueia fechamento ao clicar dentro
+          >
             <button
               className={styles.fechar}
               onClick={() => setMostrarModal(false)}
@@ -264,19 +259,16 @@ export default function CadastrarFeedback() {
               feedbacksRecentes.map((feedback) => (
                 <div key={feedback.id_feedback} className={styles.feedbackItem}>
                   <div className={styles.feedbackInfo}>
-                    <span className={styles.clienteNome}>
-                      {feedback.nome_cliente || `Cliente ${feedback.id_cliente}`}
-                    </span>
+                    <span className={styles.clienteNome}>&nbsp;</span>
                     <span className={styles.dataFeedback}>
-                      {new Date(feedback.data_criacao + 'Z').toLocaleDateString('pt-BR')}
+                      {formatarDataBR(feedback.data_criacao)}
                     </span>
                   </div>
                   <div className={styles.estrelas}>
-                    {'★'.repeat(feedback.estrelas)}{'☆'.repeat(5 - feedback.estrelas)}
+                    {"★".repeat(feedback.estrelas)}
+                    {"☆".repeat(5 - feedback.estrelas)}
                   </div>
-                  <p className={styles.comentario}>
-                    {feedback.comentario}
-                  </p>
+                  <p className={styles.comentario}>{feedback.comentario}</p>
                   {feedback.foto && (
                     <div className={styles.feedbackImagens}>
                       <img src={feedback.foto} alt="Imagem do Feedback" />
@@ -285,7 +277,7 @@ export default function CadastrarFeedback() {
                 </div>
               ))
             ) : (
-              <p style={{ textAlign: 'center', color: '#666' }}>
+              <p style={{ textAlign: "center", color: "#666" }}>
                 Nenhum feedback encontrado ainda. Seja o primeiro a comentar!
               </p>
             )}
