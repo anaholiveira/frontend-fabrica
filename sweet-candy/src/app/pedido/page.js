@@ -30,7 +30,7 @@ export default function Pedido() {
     if (idSalvo) {
       setClienteId(Number(idSalvo));
     } else {
-      alert("Erro: cliente não encontrado. Faça login novamente.");
+      alert("Você precisa estar logado para continuar. Faça login e tente novamente."); // Alerta 1
     }
   }, []);
 
@@ -51,11 +51,11 @@ export default function Pedido() {
     try {
       if (!clienteId) return;
       const res = await fetch(`https://apisweetcandy.dev.vilhena.ifro.edu.br/carrinho/${clienteId}`);
-      if (!res.ok) throw new Error("Erro ao buscar o carrinho");
+      if (!res.ok) throw new Error("Erro ao buscar os itens do carrinho. Tente novamente.");
       const dados = await res.json();
       setCarrinho(dados);
     } catch (error) {
-      alert(error.message);
+      alert("Não foi possível buscar o carrinho.\n\nDetalhes: " + error.message); // Alerta 3
       setCarrinho([]);
     }
   };
@@ -74,7 +74,7 @@ export default function Pedido() {
     const { name, value } = event.target;
     setPedido(prev => ({ ...prev, [name]: value }));
   };
-  
+
   const buscarNomeIngrediente = (tipo, id) => {
     const lista = ingredientesAPI[tipo === 'corCobertura' ? 'cor_cobertura' : tipo];
     const item = lista.find(i => String(i.id_ingrediente) === String(id));
@@ -101,11 +101,12 @@ export default function Pedido() {
   const adicionarAoCarrinho = async (event) => {
     event.preventDefault();
     if (!clienteId) {
-      alert("Erro: clienteId não disponível.");
+      alert("Você precisa estar logado para adicionar ao carrinho."); // Alerta 1 (repetido com contexto)
       return;
     }
+
     if (pedido.tamanho === "" || pedido.recheio === "" || pedido.cobertura === "" || pedido.corCobertura === "") {
-      alert("Por favor, selecione todas as opções.");
+      alert("Por favor, selecione todas as opções do cupcake antes de adicionar ao carrinho."); // Alerta 2
       return;
     }
 
@@ -131,77 +132,49 @@ export default function Pedido() {
 
       const resposta = await res.json();
       if (!res.ok) {
-        throw new Error(resposta.mensagem || "Erro ao adicionar ao carrinho");
+        throw new Error(resposta.mensagem || "Não foi possível adicionar ao carrinho.");
       }
-      alert(resposta.mensagem);
+
+      alert(resposta.mensagem); // Sucesso
       reset();
       buscarCarrinho();
 
     } catch (error) {
-      alert("Erro ao adicionar ao carrinho: " + error.message);
+      alert("Erro ao adicionar ao carrinho. Tente novamente.\n\nDetalhes: " + error.message); // Alerta 5
     }
   };
 
   const finalizarPedido = async () => {
     if (!clienteId) {
-      alert("Erro: clienteId não disponível.");
+      alert("Você precisa estar logado para finalizar o pedido."); // Alerta 1 (novamente com outro contexto)
+      return;
+    }
+
+    if (carrinho.length === 0) {
+      alert("Seu carrinho está vazio. Adicione pelo menos um cupcake para finalizar o pedido."); // Alerta 6
       return;
     }
 
     try {
-      if (carrinho.length > 0) {
-        const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/finalizarPedido", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id_cliente: clienteId }),
-        });
+      const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/finalizarPedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_cliente: clienteId }),
+      });
 
-        const resposta = await res.json();
-        if (!res.ok) throw new Error(resposta.mensagem || "Erro ao finalizar pedido do carrinho");
-        alert(resposta.mensagem);
-
-      } else {
-        if (!pedido.tamanho && !pedido.recheio && !pedido.cobertura && !pedido.corCobertura) {
-          alert("Não há pedidos no carrinho nem seleção atual para finalizar.");
-          return;
-        }
-
-        if (!pedido.tamanho || !pedido.recheio || !pedido.cobertura || !pedido.corCobertura) {
-          alert("Por favor, selecione todas as opções para finalizar o pedido.");
-          return;
-        }
-
-        const ingredientes = [
-          Number(pedido.tamanho),
-          Number(pedido.recheio),
-          Number(pedido.cobertura),
-          Number(pedido.corCobertura)
-        ];
-
-        const dadosParaAPI = {
-          id_cliente: clienteId,
-          ingredientes,
-          quantidade
-        };
-
-        const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/fazerPedidoDireto", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(dadosParaAPI),
-        });
-
-        const resposta = await res.json();
-        if (!res.ok) throw new Error(resposta.mensagem || "Erro ao fazer pedido");
-        alert(resposta.mensagem);
+      const resposta = await res.json();
+      if (!res.ok) {
+        throw new Error(resposta.mensagem || "Não foi possível finalizar o pedido.");
       }
 
+      alert(resposta.mensagem); // Sucesso
       reset();
       setMostrarCarrinho(false);
       buscarCarrinho();
       router.push("/checkout");
 
     } catch (error) {
-      alert("Erro ao finalizar: " + error.message);
+      alert("Erro ao finalizar o pedido. Verifique sua conexão ou tente novamente mais tarde.\n\nDetalhes: " + error.message); // Alerta 7
     }
   };
 
@@ -245,15 +218,14 @@ export default function Pedido() {
                           const res = await fetch(`https://apisweetcandy.dev.vilhena.ifro.edu.br/excluirPedidoCarrinho/${item.id_pedido_carrinho}`, {
                             method: 'DELETE'
                           });
-                          if (!res.ok) throw new Error("Erro ao remover pedido do carrinho");
+                          if (!res.ok) throw new Error("Erro ao remover item.");
                           const novoCarrinho = carrinho.filter(p => p.id_pedido_carrinho !== item.id_pedido_carrinho);
                           setCarrinho(novoCarrinho);
                         } catch (err) {
-                          alert("Erro ao remover pedido: " + err.message);
+                          alert("Erro ao remover pedido do carrinho: " + err.message);
                         }
                       }}
-                    > Remover do carrinho
-                    </button>
+                    >Remover do carrinho</button>
                   </div>
                 ))}
               </div>
