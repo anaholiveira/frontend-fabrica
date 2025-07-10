@@ -49,15 +49,19 @@ const Checkout = () => {
     try {
       setResumo(null);
       const res = await fetch(`https://apisweetcandy.dev.vilhena.ifro.edu.br/resumo/${clienteId}`);
+
       if (!res.ok) {
-        const erroJSON = await res.json().catch(() => ({}));
-        throw new Error(erroJSON.erro || 'Erro ao buscar resumo');
+        const textoErro = await res.text();
+        console.error('Erro na resposta da API:', textoErro);
+        throw new Error(`Erro ${res.status}: ${textoErro}`);
       }
+
       const data = await res.json();
       setResumo(data);
     } catch (error) {
-      setResumo(null);
+      console.error('Erro ao carregar o resumo do pedido:', error);
       alert(`Erro ao carregar o resumo do pedido: ${error.message}`);
+      setResumo(null);
     }
   };
 
@@ -107,7 +111,8 @@ const Checkout = () => {
       return alert('Preencha todos os campos obrigatórios do endereço.');
 
     const clienteId = localStorage.getItem('clienteId');
-    if (!clienteId) return alert('Não foi possível identificar o cliente. Faça login novamente.');
+    if (!clienteId)
+      return alert('Não foi possível identificar o cliente. Faça login novamente.');
 
     try {
       const resEndereco = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/endereco', {
@@ -116,7 +121,8 @@ const Checkout = () => {
         body: JSON.stringify({ id_cliente: clienteId, ...endereco }),
       });
       const dataEndereco = await resEndereco.json();
-      if (!resEndereco.ok) return alert(dataEndereco.erro || 'Erro ao salvar o endereço.');
+      if (!resEndereco.ok)
+        return alert(dataEndereco.erro || 'Erro ao salvar o endereço.');
     } catch {
       return alert('Erro ao conectar-se à API de endereço.');
     }
@@ -156,9 +162,10 @@ const Checkout = () => {
     }
   };
 
-  React.useEffect(() => {
+  useEffect(() => {
     const clienteId = localStorage.getItem('clienteId');
-    fetchResumo(clienteId);
+    if (clienteId) fetchResumo(clienteId);
+    else alert('Cliente não identificado. Faça login novamente.');
   }, []);
 
   return (
@@ -187,7 +194,13 @@ const Checkout = () => {
         <div className={styles.bloco}>
           <p className={`${styles.p} ${styles.fullRow}`}>
             <span className={styles.fixo}>Rua:</span>
-            <input readOnly name="rua" value={endereco.rua} className={styles.inputTexto} placeholder="Rua" />
+            <input
+              readOnly
+              name="rua"
+              value={endereco.rua}
+              className={styles.inputTexto}
+              placeholder="Rua"
+            />
           </p>
 
           <p className={styles.p}>
@@ -216,7 +229,13 @@ const Checkout = () => {
 
           <p className={styles.p}>
             <span className={styles.fixo}>Bairro:</span>
-            <input readOnly name="bairro" value={endereco.bairro} className={styles.inputTexto} placeholder="Bairro" />
+            <input
+              readOnly
+              name="bairro"
+              value={endereco.bairro}
+              className={styles.inputTexto}
+              placeholder="Bairro"
+            />
           </p>
 
           <p className={styles.p}>
