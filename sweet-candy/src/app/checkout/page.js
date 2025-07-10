@@ -42,13 +42,18 @@ const Checkout = () => {
 
   const fetchResumo = async (clienteId) => {
     try {
-      const res = await fetch(`https://apisweetcandy.dev.vilhena.ifro.edu.br/resumo/${clienteId}`);
-      if (!res.ok) throw new Error('Erro ao buscar resumo');
+      const res = await fetch(`http://localhost:3000/resumo/${clienteId}`);
+      if (!res.ok) {
+        const errorData = await res.json();
+        alert(`Erro ao carregar o resumo do pedido: ${errorData.erro || res.statusText}`);
+        setResumo(null);
+        return;
+      }
       const data = await res.json();
       setResumo(data);
     } catch {
-      setResumo(null);
       alert('Erro ao carregar o resumo do pedido.');
+      setResumo(null);
     }
   };
 
@@ -71,19 +76,16 @@ const Checkout = () => {
     if (!clienteId) return alert('Não foi possível identificar o cliente. Faça login novamente.');
 
     try {
-      const res = await fetch(
-        `https://apisweetcandy.dev.vilhena.ifro.edu.br/pedidos/aguardando/${clienteId}`,
-        { method: 'DELETE' }
-      );
+      const res = await fetch(`http://localhost:3000/pedidos/aguardando/${clienteId}`, { method: 'DELETE' });
       const data = await res.json();
       if (res.ok) {
         alert('Pedidos cancelados!');
         router.push('/pedido');
       } else {
-        alert(data.erro || 'Erro ao cancelar pedidos.');
+        alert(data.erro || 'Ocorreu um erro ao tentar cancelar os pedidos.');
       }
     } catch {
-      alert('Erro ao conectar com a API. Tente novamente mais tarde.');
+      alert('Erro ao conectar com a API. Por favor, tente novamente mais tarde.');
     }
   };
 
@@ -91,27 +93,28 @@ const Checkout = () => {
     if (!resumo || resumo.quantidade === 0)
       return alert('Adicione pelo menos um cupcake antes de prosseguir com o pedido.');
 
-    if (!pagamento) return alert('Selecione uma forma de pagamento antes de finalizar.');
+    if (!pagamento)
+      return alert('Selecione uma forma de pagamento antes de finalizar o pedido.');
 
     const { rua, numero, cep, bairro } = endereco;
     if (!rua || !numero || !cep || !bairro)
-      return alert('Preencha todos os campos obrigatórios do endereço.');
+      return alert('Preencha todos os campos obrigatórios do endereço antes de continuar.');
 
     const clienteId = localStorage.getItem('clienteId');
     if (!clienteId)
       return alert('Não foi possível identificar o cliente. Faça login novamente.');
 
     try {
-      const resEndereco = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/endereco', {
+      const resEndereco = await fetch('http://localhost:3000/endereco', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_cliente: clienteId, ...endereco }),
       });
       const dataEndereco = await resEndereco.json();
       if (!resEndereco.ok)
-        return alert(dataEndereco.erro || 'Erro ao salvar o endereço.');
+        return alert(dataEndereco.erro || 'Erro ao salvar o endereço. Verifique os dados e tente novamente.');
     } catch {
-      return alert('Erro ao conectar-se à API de endereço.');
+      return alert('Erro ao conectar-se à API de endereço. Por favor, tente novamente mais tarde.');
     }
 
     const formaPagamentoConvertida = pagamento === 'maquina' ? 'cartao' : pagamento;
@@ -126,7 +129,7 @@ const Checkout = () => {
     };
 
     try {
-      const response = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/resumo', {
+      const response = await fetch('http://localhost:3000/resumo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
@@ -145,14 +148,14 @@ const Checkout = () => {
 
       router.push('/vendaCupcake');
     } catch {
-      alert('Erro ao conectar com a API de pedido.');
+      alert('Erro ao conectar com a API de pedido. Tente novamente.');
     }
   };
 
   useEffect(() => {
     const clienteId = localStorage.getItem('clienteId');
     if (clienteId) fetchResumo(clienteId);
-    else alert('Cliente não identificado. Faça login novamente.');
+    else alert('Cliente não identificado. Realize o login novamente para continuar.');
   }, []);
 
   return (
@@ -185,6 +188,7 @@ const Checkout = () => {
               readOnly
               name="rua"
               value={endereco.rua}
+              onChange={handleEnderecoChange}
               className={styles.inputTexto}
               placeholder="Rua"
             />
@@ -220,6 +224,7 @@ const Checkout = () => {
               readOnly
               name="bairro"
               value={endereco.bairro}
+              onChange={handleEnderecoChange}
               className={styles.inputTexto}
               placeholder="Bairro"
             />
