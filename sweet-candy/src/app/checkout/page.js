@@ -43,11 +43,12 @@ const Checkout = () => {
   const fetchResumo = async (clienteId) => {
     try {
       const res = await fetch(`https://apisweetcandy.dev.vilhena.ifro.edu.br/resumo/${clienteId}`);
+      if (!res.ok) throw new Error('Erro ao buscar resumo');
       const data = await res.json();
-      if (res.ok) setResumo(data);
-      else setResumo(null);
+      setResumo(data);
     } catch {
       setResumo(null);
+      alert('Erro ao carregar o resumo do pedido.');
     }
   };
 
@@ -77,13 +78,12 @@ const Checkout = () => {
       const data = await res.json();
       if (res.ok) {
         alert('Pedidos cancelados!');
-        setResumo(null);
         router.push('/pedido');
       } else {
-        alert(data.erro || 'Ocorreu um erro ao tentar cancelar os pedidos.');
+        alert(data.erro || 'Erro ao cancelar pedidos.');
       }
     } catch {
-      alert('Erro ao conectar com a API. Por favor, tente novamente mais tarde.');
+      alert('Erro ao conectar com a API. Tente novamente mais tarde.');
     }
   };
 
@@ -91,12 +91,11 @@ const Checkout = () => {
     if (!resumo || resumo.quantidade === 0)
       return alert('Adicione pelo menos um cupcake antes de prosseguir com o pedido.');
 
-    if (!pagamento)
-      return alert('Selecione uma forma de pagamento antes de finalizar o pedido.');
+    if (!pagamento) return alert('Selecione uma forma de pagamento antes de finalizar.');
 
     const { rua, numero, cep, bairro } = endereco;
     if (!rua || !numero || !cep || !bairro)
-      return alert('Preencha todos os campos obrigatórios do endereço antes de continuar.');
+      return alert('Preencha todos os campos obrigatórios do endereço.');
 
     const clienteId = localStorage.getItem('clienteId');
     if (!clienteId)
@@ -110,9 +109,9 @@ const Checkout = () => {
       });
       const dataEndereco = await resEndereco.json();
       if (!resEndereco.ok)
-        return alert(dataEndereco.erro || 'Erro ao salvar o endereço. Verifique os dados e tente novamente.');
+        return alert(dataEndereco.erro || 'Erro ao salvar o endereço.');
     } catch {
-      return alert('Erro ao conectar-se à API de endereço. Por favor, tente novamente mais tarde.');
+      return alert('Erro ao conectar-se à API de endereço.');
     }
 
     const formaPagamentoConvertida = pagamento === 'maquina' ? 'cartao' : pagamento;
@@ -146,14 +145,14 @@ const Checkout = () => {
 
       router.push('/vendaCupcake');
     } catch {
-      alert('Erro ao conectar com a API de pedido. Tente novamente.');
+      alert('Erro ao conectar com a API de pedido.');
     }
   };
 
   useEffect(() => {
     const clienteId = localStorage.getItem('clienteId');
     if (clienteId) fetchResumo(clienteId);
-    else alert('Cliente não identificado. Realize o login novamente para continuar.');
+    else alert('Cliente não identificado. Faça login novamente.');
   }, []);
 
   return (
@@ -186,7 +185,6 @@ const Checkout = () => {
               readOnly
               name="rua"
               value={endereco.rua}
-              onChange={handleEnderecoChange}
               className={styles.inputTexto}
               placeholder="Rua"
             />
@@ -222,7 +220,6 @@ const Checkout = () => {
               readOnly
               name="bairro"
               value={endereco.bairro}
-              onChange={handleEnderecoChange}
               className={styles.inputTexto}
               placeholder="Bairro"
             />
