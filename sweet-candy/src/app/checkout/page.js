@@ -42,16 +42,20 @@ const Checkout = () => {
 
   const fetchResumo = async (clienteId) => {
     try {
+      console.log('Buscando resumo para cliente:', clienteId);
       const res = await fetch(`http://localhost:3000/resumo/${clienteId}`);
       if (!res.ok) {
         const errorData = await res.json();
+        console.error('Erro no fetch resumo:', errorData);
         alert(`Erro ao carregar o resumo do pedido: ${errorData.erro || res.statusText}`);
         setResumo(null);
         return;
       }
       const data = await res.json();
+      console.log('Resumo recebido:', data);
       setResumo(data);
-    } catch {
+    } catch (e) {
+      console.error('Erro no fetchResumo:', e);
       alert('Erro ao carregar o resumo do pedido.');
       setResumo(null);
     }
@@ -76,7 +80,9 @@ const Checkout = () => {
     if (!clienteId) return alert('Não foi possível identificar o cliente. Faça login novamente.');
 
     try {
-      const res = await fetch(`http://localhost:3000/pedidos/aguardando/${clienteId}`, { method: 'DELETE' });
+      const res = await fetch(`http://localhost:3000/pedidos/aguardando/${clienteId}`, {
+        method: 'DELETE',
+      });
       const data = await res.json();
       if (res.ok) {
         alert('Pedidos cancelados!');
