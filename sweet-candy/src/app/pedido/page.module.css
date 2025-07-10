@@ -28,6 +28,7 @@
     font-size: 45px;
     margin: 5px 0 10px;
 }
+
 .h2 {
     margin: 15px 0 10px;
 }
@@ -74,6 +75,24 @@
 .botaoRemover:hover {
     box-shadow: 0 1px 10px #ff78e2;
     color: #ffbaf0;
+}
+
+.botaoMenor {
+    padding: 8px 16px;
+    font-size: 18px;
+    background-color: #fc7de0;
+    border: none;
+    border-radius: 10px;
+    color: var(--cor4);
+    font-family: Nerko One;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+}
+
+.botaoMenor:hover {
+    transform: scale(1.03);
+    box-shadow: 0 1px 15px #ff78e2;
+    color: var(--cor3);
 }
 
 .link:hover {
@@ -187,7 +206,7 @@
     color: var(--cor4);
 }
 
-.detalhesCarrinho {
+.detalhesCarrinho, .confirmacaoFixa {
     position: fixed;
     top: 100px;
     z-index: 999;
@@ -199,6 +218,8 @@
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
 }
 
 .detalhesDoCupcake {
@@ -228,8 +249,17 @@
     left: 0;
     width: 100vw;
     height: 100vh;
+    backdrop-filter: blur(4px);
     background: rgba(0, 0, 0, 0.3);
     z-index: 998;
+}
+
+.botoesConfirmacao {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin-top: 10px;
+    margin-bottom: 15px;
 }
 
 @media (max-width: 500px) {
@@ -248,7 +278,7 @@
         width: 100%;
         flex-direction: column;
     }
-    .detalhesCarrinho {
+    .detalhesCarrinho, .confirmacaoFixa {
         width: 95vw;
         height: 80vh;
         top: 80px;
@@ -256,5 +286,11 @@
     }
     .carrinho {
         margin-right: 10px;
+    }
+    .botoesConfirmacao {
+        flex-direction: column;
+    }
+    .botaoMenor {
+        width: 100%;
     }
 }

@@ -23,6 +23,7 @@ export default function Pedido() {
     cor_cobertura: []
   });
   const [mostrarCarrinho, setMostrarCarrinho] = useState(false);
+  const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
   const [carrinho, setCarrinho] = useState([]);
 
   useEffect(() => {
@@ -30,7 +31,7 @@ export default function Pedido() {
     if (idSalvo) {
       setClienteId(Number(idSalvo));
     } else {
-      alert("Você precisa estar logado para continuar. Faça login e tente novamente."); // Alerta 1
+      alert("Você precisa estar logado para continuar. Faça login e tente novamente.");
     }
   }, []);
 
@@ -55,7 +56,7 @@ export default function Pedido() {
       const dados = await res.json();
       setCarrinho(dados);
     } catch (error) {
-      alert("Não foi possível buscar o carrinho.\n\nDetalhes: " + error.message); // Alerta 3
+      alert("Não foi possível buscar o carrinho.\n\nDetalhes: " + error.message);
       setCarrinho([]);
     }
   };
@@ -101,12 +102,12 @@ export default function Pedido() {
   const adicionarAoCarrinho = async (event) => {
     event.preventDefault();
     if (!clienteId) {
-      alert("Você precisa estar logado para adicionar ao carrinho."); // Alerta 1 (repetido com contexto)
+      alert("Você precisa estar logado para adicionar ao carrinho.");
       return;
     }
 
     if (pedido.tamanho === "" || pedido.recheio === "" || pedido.cobertura === "" || pedido.corCobertura === "") {
-      alert("Por favor, selecione todas as opções do cupcake antes de adicionar ao carrinho."); // Alerta 2
+      alert("Por favor, selecione todas as opções do cupcake antes de adicionar ao carrinho.");
       return;
     }
 
@@ -135,26 +136,30 @@ export default function Pedido() {
         throw new Error(resposta.mensagem || "Não foi possível adicionar ao carrinho.");
       }
 
-      alert(resposta.mensagem); // Sucesso
+      alert(resposta.mensagem);
       reset();
       buscarCarrinho();
 
     } catch (error) {
-      alert("Erro ao adicionar ao carrinho. Tente novamente.\n\nDetalhes: " + error.message); // Alerta 5
+      alert("Erro ao adicionar ao carrinho. Tente novamente.\n\nDetalhes: " + error.message);
     }
   };
 
   const finalizarPedido = async () => {
     if (!clienteId) {
-      alert("Você precisa estar logado para finalizar o pedido."); // Alerta 1 (novamente com outro contexto)
+      alert("Você precisa estar logado para finalizar o pedido.");
       return;
     }
 
     if (carrinho.length === 0) {
-      alert("Seu carrinho está vazio. Adicione pelo menos um cupcake para finalizar o pedido."); // Alerta 6
+      alert("Seu carrinho está vazio. Adicione pelo menos um cupcake para finalizar o pedido.");
       return;
     }
 
+    setMostrarConfirmacao(true);
+  };
+
+  const confirmarFinalizacao = async () => {
     try {
       const res = await fetch("https://apisweetcandy.dev.vilhena.ifro.edu.br/finalizarPedido", {
         method: "POST",
@@ -167,14 +172,15 @@ export default function Pedido() {
         throw new Error(resposta.mensagem || "Não foi possível finalizar o pedido.");
       }
 
-      alert(resposta.mensagem); // Sucesso
+      alert(resposta.mensagem);
       reset();
       setMostrarCarrinho(false);
+      setMostrarConfirmacao(false);
       buscarCarrinho();
       router.push("/checkout");
 
     } catch (error) {
-      alert("Erro ao finalizar o pedido. Verifique sua conexão ou tente novamente mais tarde.\n\nDetalhes: " + error.message); // Alerta 7
+      alert("Erro ao finalizar o pedido. Verifique sua conexão ou tente novamente mais tarde.\n\nDetalhes: " + error.message);
     }
   };
 
@@ -228,6 +234,29 @@ export default function Pedido() {
                     >Remover do carrinho</button>
                   </div>
                 ))}
+              </div>
+            </div>
+          </>
+        )}
+
+        {mostrarConfirmacao && (
+          <>
+            <div className={styles.overlay}></div>
+            <div className={styles.confirmacaoFixa}>
+              <h2 className={styles.h2}>Confirmar pedido</h2>
+              <div className={styles.detalhesDoCupcake}>
+                {carrinho.map(item => (
+                  <div key={item.id_pedido_carrinho} className={styles.itemCarrinho}>
+                    <p><span className={styles.tituloCarrinho}>ID Pedido:</span> {item.id_pedido_carrinho}</p>
+                    <p><span className={styles.tituloCarrinho}>Ingredientes:</span> {item.ingredientes.split(',').join(', ')}</p>
+                    <p><span className={styles.tituloCarrinho}>Quantidade:</span> {item.quantidade}</p>
+                    <p><span className={styles.tituloCarrinho}>Valor total:</span> R$ {Number(item.valor_total).toFixed(2)}</p>
+                  </div>
+                ))}
+              </div>
+              <div className={styles.botoesConfirmacao}>
+                <button className={styles.botaoMenor} onClick={() => setMostrarConfirmacao(false)}>Cancelar</button>
+                <button className={styles.botaoMenor} onClick={confirmarFinalizacao}>Confirmar</button>
               </div>
             </div>
           </>
