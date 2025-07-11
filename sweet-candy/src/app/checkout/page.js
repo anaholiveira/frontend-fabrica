@@ -102,6 +102,7 @@ const Checkout = () => {
     if (!clienteId)
       return alert('Não foi possível identificar o cliente. Faça login novamente.');
 
+    let idEndereco;
     try {
       const resEndereco = await fetch('https://apisweetcandy.dev.vilhena.ifro.edu.br/endereco', {
         method: 'POST',
@@ -111,6 +112,8 @@ const Checkout = () => {
       const dataEndereco = await resEndereco.json();
       if (!resEndereco.ok)
         return alert(dataEndereco.erro || 'Erro ao salvar o endereço. Verifique os dados e tente novamente.');
+
+      idEndereco = dataEndereco.insertId;
     } catch {
       return alert('Erro ao conectar-se à API de endereço. Por favor, tente novamente mais tarde.');
     }
@@ -124,6 +127,7 @@ const Checkout = () => {
       valor_total: Number(resumo.total),
       taxaServico: Number(resumo.taxaServico),
       taxaEntrega: Number(resumo.taxaEntrega),
+      id_endereco: idEndereco
     };
 
     try {
