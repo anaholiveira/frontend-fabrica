@@ -206,7 +206,7 @@
     color: var(--cor4);
 }
 
-.detalhesCarrinho, .confirmacaoFixa {
+.detalhesCarrinho {
     position: fixed;
     top: 100px;
     z-index: 999;
@@ -217,6 +217,24 @@
     background: linear-gradient(#FBD1FF 20%, #ffb2ee 80%);
     border-radius: 15px;
     padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+}
+
+.confirmacaoFixa {
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 999;
+    width: 90vw;
+    max-width: 500px;
+    height: 70vh;
+    max-height: 500px;
+    background: linear-gradient(#FBD1FF 20%, #ffb2ee 80%);
+    border-radius: 15px;
+    padding: 20px 20px 80px 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
@@ -255,11 +273,13 @@
 }
 
 .botoesConfirmacao {
+    position: absolute;
+    bottom: 15px;
+    left: 0;
+    width: 100%;
     display: flex;
     justify-content: center;
     gap: 80px;
-    margin-top: 10px;
-    margin-bottom: 15px;
 }
 
 @media (max-width: 500px) {
@@ -287,10 +307,24 @@
     .carrinho {
         margin-right: 10px;
     }
-    .botoesConfirmacao {
-        flex-direction: column;
-    }
     .botaoMenor {
         width: 100%;
+    }
+    .confirmacaoFixa {
+        width: 95vw;
+        max-width: 500px;
+        height: auto;
+        max-height: 80vh;
+        top: 80px;
+        padding: 15px 15px 70px 15px;
+        overflow-y: auto;
+    }
+    .botoesConfirmacao {
+        gap: 60px;
+    }
+    .botoesConfirmacao button, .botoesConfirmacao .button {
+        width: 25vw;
+        padding: 8px 10px;
+        font-size: 17px;
     }
 }
