@@ -142,7 +142,13 @@ const Checkout = () => {
 
       setPagamento('');
       setEndereco({ rua: '', numero: '', cep: '', bairro: '', complemento: '' });
-      setResumo(null);
+      setResumo({
+        quantidade: 0,
+        subtotal: 0,
+        taxaServico: resumo.taxaServico,
+        taxaEntrega: resumo.taxaEntrega,
+        total: resumo.taxaServico + resumo.taxaEntrega,
+      });
 
       router.push('/vendaCupcake');
     } catch {
