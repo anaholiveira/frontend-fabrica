@@ -15,6 +15,12 @@
     margin-top: 30px;
     border-radius: 15px;
     box-shadow: 0 5px 15px var(--cor2);
+    overflow-y: auto;
+    scrollbar-width: none;
+}
+
+.form::-webkit-scrollbar {
+    display: none;
 }
 
 .detalhePedido {
@@ -22,9 +28,19 @@
     width: 90%;
     border-radius: 5px;
     margin: auto;
-    height: 50px;
+    padding: 10px 15px;
+    margin-bottom: 20px;
     display: flex;
-    gap: 80px;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.idData {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: break-word;
 }
 
 .id, .data {
@@ -45,23 +61,27 @@
 }
 
 .button {
-    height: 30px;
-    margin-top: auto;
-    margin-bottom: auto;
-    padding-left: 5px;
-    padding-right: 5px;
-    border-radius: 7px;
+    height: 35px;
+    padding: 0 12px;
     font-family: "Coiny", system-ui;
     color: var(--cor4);
     background-color: #fc7de0;
     border: none;
+    border-radius: 7px;
     cursor: pointer;
-    color: var(--cor4);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 1px 15px #ff78e2;
+    color: var(--cor3);
 }
 
 .buttonCima {
     height: 30px;
-    margin-left: 100px;
+    margin-left: 124px;
     margin-right: 70px;
     margin-bottom: 10px;
     padding-left: 5px;
@@ -73,6 +93,12 @@
     border: none;
     cursor: pointer;
     color: var(--cor4);
+}
+
+.buttonCima:hover {
+    transform: scale(1.03);
+    box-shadow: 0 1px 15px #ff78e2;
+    color: var(--cor3);
 }
 
 .buttonMarcarConcluido {
@@ -87,6 +113,12 @@
     display: block;
     margin: auto;
     padding: 5px;
+}
+
+.buttonMarcarConcluido:hover {
+    transform: scale(1.03);
+    box-shadow: 0 1px 15px #ff78e2;
+    color: var(--cor3);
 }
 
 .divDetalhes {
@@ -110,13 +142,35 @@
 
 .detalhesExtras {
     background-color: rgb(255, 210, 255);
-    width: 300px;
+    width: 325px;
+    max-height: 90vh;
     height: auto;
     border-radius: 5px;
     padding: 20px;
     z-index: 20;
     margin: auto;
     word-wrap: break-word;
+    overflow-y: auto;
+}
+
+.input {
+    width: 90%;
+    display: block;
+    margin: auto;
+    margin-top: 13px;
+    margin-bottom: 20px;
+    padding: 5px;
+    border-radius: 7px;
+    border: none;
+}
+
+.icon {
+    margin-left: 37px;
+}
+
+.input::placeholder {
+    font-family: "Coiny", system-ui;
+
 }
 
 @media (max-width: 600px) {
@@ -132,6 +186,7 @@
         height: auto;
         padding: 10px;
         margin: auto;
+        margin-bottom: 20px;
     }
 
     .button {
@@ -164,6 +219,10 @@
         margin-bottom: 10px;
         display: block;
     }
+
+    .icon {
+        margin-left: 30px;
+    }
 }
 
 @media (max-width: 400px) {
@@ -179,6 +238,10 @@
     .detalhesExtras {
         width: 95%;
         font-size: 14px;
+    }
+
+    .icon {
+        margin-left: 25px;
     }
 }
 
@@ -207,5 +270,9 @@
         font-size: 12px;
         padding-left: 5px;
         padding-right: 5px;
+    }
+
+    .icon {
+        margin-left: 20px;
     }
 }
