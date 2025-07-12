@@ -24,6 +24,11 @@ export default function CadastrarFeedback() {
     const arquivo = event.target.files[0];
     if (!arquivo) return;
 
+    if (arquivo.size > 5 * 1024 * 1024) {
+      alert("Arquivo muito grande. O limite é 5MB.");
+      return;
+    }
+
     const novaPreview = URL.createObjectURL(arquivo);
     setPreview(novaPreview);
     setMensagem(true);
@@ -62,7 +67,7 @@ export default function CadastrarFeedback() {
         const blob = await response.blob();
         fotoBase64 = await new Promise((resolve, reject) => {
           const reader = new FileReader();
-          reader.onloadend = () => resolve(reader.result);
+          reader.onloadend = () => resolve(reader.result); 
           reader.onerror = reject;
           reader.readAsDataURL(blob);
         });
@@ -103,7 +108,11 @@ export default function CadastrarFeedback() {
       }
     } catch (error) {
       console.error("Erro ao conectar com a API de envio:", error);
-      alert(`Não foi possível conectar com o servidor para enviar o feedback.\nErro: ${error.message || error}`);
+      alert(
+        `Não foi possível conectar com o servidor para enviar o feedback.\nErro: ${
+          error.message || error
+        }`
+      );
     }
   }
 
@@ -124,22 +133,23 @@ export default function CadastrarFeedback() {
     }
   }
 
-function formatarDataBR(dataISO) {
-  try {
-
-    const dataUtc = new Date(dataISO);
-
-    const formatter = new Intl.DateTimeFormat("pt-BR", {
-      timeZone: "America/Porto_Velho",
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-    return formatter.format(dataUtc);
-  } catch {
-    return dataISO;
+  function formatarDataBR(dataISO) {
+    try {
+      const data = new Date(dataISO);
+      return data.toLocaleString("pt-BR", {
+        timeZone: "America/Porto_Velho",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      });
+    } catch {
+      return dataISO;
+    }
   }
-}
 
   return (
     <div>
@@ -241,12 +251,9 @@ function formatarDataBR(dataISO) {
       {mostrarModal && (
         <div
           className={styles.modalOverlay}
-          onClick={() => setMostrarModal(false)} // Fecha ao clicar fora
+          onClick={() => setMostrarModal(false)}
         >
-          <div
-            className={styles.modal}
-            onClick={(e) => e.stopPropagation()} // Bloqueia fechamento ao clicar dentro
-          >
+          <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
             <button
               className={styles.fechar}
               onClick={() => setMostrarModal(false)}
