@@ -38,29 +38,49 @@ export default function Relatorio() {
     }
 
     const url = `https://apisweetcandy.dev.vilhena.ifro.edu.br/relatorio?dataInicio=${dataInicio}&dataFim=${dataFim}`;
+    console.log('Buscando relatório:', url);
 
     try {
       const res = await fetch(url);
-      const data = await res.json();
 
       if (!res.ok) {
-        setMensagem(data.mensagem || 'Erro ao buscar relatório.');
-      } else if (Array.isArray(data) && data.length === 0) {
+        const textoErro = await res.text();
+        setMensagem(textoErro || 'Erro ao buscar relatório.');
+        return;
+      }
+
+      const data = await res.json();
+      console.log('Dados recebidos da API:', data);
+
+      if (!data || (Array.isArray(data) && data.length === 0)) {
         setMensagem('Nenhum pedido foi encontrado no intervalo informado.');
+        return;
+      }
+
+      const pedidosFiltrados = data.filter(
+        (pedido) =>
+          pedido.status === 'finalizado' &&
+          (recheioSelecionado ? pedido.recheio === recheioSelecionado : true)
+      );
+
+      if (pedidosFiltrados.length === 0) {
+        setMensagem('Nenhum pedido finalizado encontrado com o recheio selecionado.');
+        setPedidos([]);
       } else {
-        const pedidosFiltrados = recheioSelecionado
-          ? data.filter(pedido => pedido.ingredientes.some(ing => ing.nome === recheioSelecionado))
-          : data;
         setPedidos(pedidosFiltrados);
       }
     } catch (error) {
-      setMensagem('Erro ao conectar com a API.');
+      console.error('Erro ao conectar com a API ou processar dados:', error);
+      setMensagem('Erro ao conectar com a API ou processar dados.');
     }
   };
 
   const calcularTotais = () => {
     const totalPedidos = pedidos.length;
-    const valorTotal = pedidos.reduce((total, pedido) => total + pedido.total, 0);
+    const valorTotal = pedidos.reduce(
+      (total, pedido) => total + Number(pedido.valor_total || 0),
+      0
+    );
     return { totalPedidos, valorTotal };
   };
 
@@ -117,38 +137,51 @@ export default function Relatorio() {
                 Confirmar
               </button>
               <button className={styles.botao} type="button">
-                <a className={styles.bott} href="/area">Voltar</a>
+                <a className={styles.bott} href="/area">
+                  Voltar
+                </a>
               </button>
             </div>
           </form>
 
           {mensagem && (
-            <p style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>{mensagem}</p>
+            <p style={{ color: 'red', textAlign: 'center', marginTop: '10px' }}>
+              {mensagem}
+            </p>
           )}
 
           {pedidos.length > 0 && (
             <>
-              <table className={styles.tabela}>
-                <thead>
-                  <tr>
-                    <th>ID</th>
-                    <th>Data</th>
-                    <th>Cliente</th>
-                    <th>Valor</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {pedidos.map((pedido) => (
-                    <tr key={pedido.id}>
-                      <td>{pedido.id}</td>
-                      <td>{pedido.data}</td>
-                      <td>{pedido.cliente}</td>
-                      <td>R$ {pedido.total.toFixed(2)}</td>
+              <div className={styles.tabelaWrapper}>
+                <table className={styles.tabela}>
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Data</th>
+                      <th>Cliente</th>
+                      <th>Valor</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-              <p style={{ textAlign: 'center', marginTop: '10px', fontFamily: 'Coiny, system-ui', color: 'var(--cor4)' }}>
+                  </thead>
+                  <tbody>
+                    {pedidos.map((pedido, index) => (
+                      <tr key={`${pedido.id_pedido}-${index}`}>
+                        <td>{pedido.id_pedido}</td>
+                        <td>{pedido.data_criacao}</td>
+                        <td>{pedido.nome_completo}</td>
+                        <td>R$ {Number(pedido.valor_total).toFixed(2)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p
+                style={{
+                  textAlign: 'center',
+                  marginTop: '10px',
+                  fontFamily: 'Coiny, system-ui',
+                  color: 'var(--cor4)',
+                }}
+              >
                 Total de pedidos: {totalPedidos} | Valor total: R$ {valorTotal.toFixed(2)}
               </p>
             </>
